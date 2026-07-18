@@ -1,11 +1,15 @@
 'use client';
 
-import { whatsappLink, WHATSAPP_MESSAGES } from '@/lib/constants';
+import { useContent } from './ContentProvider';
+import { waLink } from '@/lib/content';
+import { WHATSAPP_MESSAGES } from '@/lib/constants';
 
 export function WhatsAppFloat() {
+  const { contato } = useContent();
+
   return (
     <a
-      href={whatsappLink(WHATSAPP_MESSAGES.default)}
+      href={waLink(contato.whatsappNumber, WHATSAPP_MESSAGES.default)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"

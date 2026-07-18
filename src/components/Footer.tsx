@@ -1,20 +1,22 @@
 'use client';
 
 import { MapPin, Phone, Instagram } from 'lucide-react';
-import { Monogram } from './Monogram';
-import { CONTACT, whatsappLink, WHATSAPP_MESSAGES } from '@/lib/constants';
+import { Logo } from './Logo';
+import { useContent } from './ContentProvider';
+import { waLink } from '@/lib/content';
+import { WHATSAPP_MESSAGES } from '@/lib/constants';
 
 export function Footer() {
+  const { contato, medicos } = useContent();
   const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-gold/15 bg-ivory/60 pt-16">
       <div className="container-luxe">
         <div className="grid gap-12 pb-14 md:grid-cols-3">
-          {/* Marca */}
           <div>
             <div className="flex items-center gap-3">
-              <Monogram className="h-11 w-11" />
+              <Logo className="h-11 w-11" />
               <div className="flex flex-col leading-none">
                 <span className="font-roman text-lg tracking-[0.3em] text-espresso">
                   BRITO
@@ -30,24 +32,19 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Corpo clínico */}
           <div>
             <h4 className="font-sans text-[0.7rem] uppercase tracking-[0.22em] text-bronze">
               Corpo Clínico
             </h4>
             <ul className="mt-4 space-y-2">
-              {CONTACT.doctors.map((d) => (
-                <li key={d} className="font-display text-xl text-espresso">
-                  {d}
-                </li>
-              ))}
+              <li className="font-display text-xl text-espresso">{medicos.nome1}</li>
+              <li className="font-display text-xl text-espresso">{medicos.nome2}</li>
             </ul>
             <span className="mt-3 block font-sans text-[0.72rem] text-espresso-soft">
               Médicos Responsáveis
             </span>
           </div>
 
-          {/* Contato */}
           <div>
             <h4 className="font-sans text-[0.7rem] uppercase tracking-[0.22em] text-bronze">
               Contato
@@ -56,31 +53,31 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={17} strokeWidth={1.5} className="mt-0.5 shrink-0 text-bronze" />
                 <span>
-                  {CONTACT.address.street}
+                  {contato.enderecoRua}
                   <br />
-                  {CONTACT.address.district}
+                  {contato.enderecoBairro}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={17} strokeWidth={1.5} className="shrink-0 text-bronze" />
                 <a
-                  href={whatsappLink(WHATSAPP_MESSAGES.default)}
+                  href={waLink(contato.whatsappNumber, WHATSAPP_MESSAGES.default)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-espresso"
                 >
-                  {CONTACT.whatsapp.display}
+                  {contato.whatsappDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Instagram size={17} strokeWidth={1.5} className="shrink-0 text-bronze" />
                 <a
-                  href={CONTACT.instagram.url}
+                  href={contato.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-espresso"
                 >
-                  {CONTACT.instagram.handle}
+                  {contato.instagramHandle}
                 </a>
               </li>
             </ul>

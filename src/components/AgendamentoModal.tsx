@@ -10,7 +10,9 @@ import {
 } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X, Loader2, Check, Phone } from 'lucide-react';
-import { CONTACT, OBJETIVOS, whatsappLink } from '@/lib/constants';
+import { OBJETIVOS } from '@/lib/constants';
+import { waLink } from '@/lib/content';
+import { useContent } from './ContentProvider';
 import { Monogram } from './Monogram';
 
 type ModalContextValue = { open: () => void };
@@ -28,6 +30,7 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 
 export function AgendamentoProvider({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
+  const content = useContent();
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -68,8 +71,12 @@ export function AgendamentoProvider({ children }: { children: ReactNode }) {
     ]
       .filter(Boolean)
       .join('\n');
-    window.open(whatsappLink(msg), '_blank', 'noopener,noreferrer');
-  }, [form]);
+    window.open(
+      waLink(content.contato.whatsappNumber, msg),
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }, [form, content.contato.whatsappNumber]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {

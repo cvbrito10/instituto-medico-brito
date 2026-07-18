@@ -4,12 +4,13 @@ import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 import { Monogram } from './Monogram';
 import { useAgendamento } from './AgendamentoModal';
-import { CONTACT } from '@/lib/constants';
+import { useContent } from './ContentProvider';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function CTA() {
   const { open } = useAgendamento();
+  const { contato } = useContent();
 
   return (
     <section className="relative px-6 py-20 lg:py-28">
@@ -75,7 +76,7 @@ export function CTA() {
                 Agendar Consulta
               </button>
               <p className="mt-5 font-sans text-[0.76rem] uppercase tracking-[0.18em] text-bronze">
-                Atendimento pelo WhatsApp · {CONTACT.whatsapp.display}
+                Atendimento pelo WhatsApp · {contato.whatsappDisplay}
               </p>
             </motion.div>
           </div>

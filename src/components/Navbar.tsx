@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { Monogram } from './Monogram';
+import { Logo } from './Logo';
 import { useAgendamento } from './AgendamentoModal';
 import { cn } from '@/lib/utils';
 
@@ -42,7 +42,7 @@ export function Navbar() {
           className="flex items-center gap-3"
           aria-label="Instituto Médico Brito — início"
         >
-          <Monogram className="h-9 w-9" />
+          <Logo className="h-9 w-9" />
           <span className="flex flex-col leading-none">
             <span className="font-roman text-[0.95rem] tracking-[0.32em] text-espresso">
               BRITO
@@ -101,7 +101,7 @@ export function Navbar() {
               transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
             >
               <div className="mb-8 flex items-center justify-between">
-                <Monogram className="h-9 w-9" />
+                <Logo className="h-9 w-9" />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Fechar menu"
