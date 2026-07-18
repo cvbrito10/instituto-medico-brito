@@ -41,10 +41,12 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === '/admin/login';
+  const isRecovery = path === '/admin/redefinir-senha';
+  const isPublic = isLogin || isRecovery;
   const isAdmin = path.startsWith('/admin');
 
   // Não logado tentando acessar o painel → manda para o login
-  if (isAdmin && !isLogin && !user) {
+  if (isAdmin && !isPublic && !user) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = '/admin/login';
     return NextResponse.redirect(redirectUrl);
