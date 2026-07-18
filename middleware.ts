@@ -30,9 +30,14 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+  } catch {
+    // Falha ao verificar sessão (rede/config): deixa a página decidir
+    return response;
+  }
 
   const path = request.nextUrl.pathname;
   const isLogin = path === '/admin/login';
