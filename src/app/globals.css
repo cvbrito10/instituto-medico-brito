@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --page: #fcfaf6;
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+
+  body {
+    @apply bg-porcelain text-espresso font-sans antialiased;
+    background-image: radial-gradient(
+      120% 80% at 50% -10%,
+      #ffffff 0%,
+      #fcfaf6 45%,
+      #f6f1e8 100%
+    );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(201, 166, 107, 0.22);
+    color: #2a241c;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  /* Foco de teclado visível e elegante */
+  :focus-visible {
+    outline: 2px solid rgba(201, 166, 107, 0.9);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-luxe {
+    @apply mx-auto w-full max-w-[1200px] px-6 md:px-10;
+  }
+
+  .eyebrow {
+    @apply font-sans text-[0.7rem] font-medium uppercase tracking-luxe text-bronze;
+  }
+
+  /* Fio de ouro — assinatura visual que remete à caligrafia da logo */
+  .gold-thread {
+    position: relative;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(201, 166, 107, 0.5) 22%,
+      rgba(201, 166, 107, 0.85) 50%,
+      rgba(201, 166, 107, 0.5) 78%,
+      transparent
+    );
+  }
+  .gold-thread::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: linear-gradient(135deg, #e4ce99, #c9a66b);
+    box-shadow: 0 0 0 3px rgba(252, 250, 246, 1);
+  }
+
+  .text-gold-fill {
+    background: linear-gradient(135deg, #cbb079 0%, #9a7b45 55%, #c9a66b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background: rgba(252, 250, 246, 0.72);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+  }
+
+  /* Botões premium */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-sans text-sm font-medium transition-all duration-300 ease-out;
+  }
+  .btn-primary {
+    @apply btn px-7 py-3.5 text-porcelain;
+    background: linear-gradient(135deg, #b98f52 0%, #9a7b45 50%, #7c6236 100%);
+    box-shadow: 0 10px 30px -12px rgba(154, 123, 69, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 42px -14px rgba(154, 123, 69, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  .btn-ghost {
+    @apply btn border border-gold/40 bg-white/50 px-7 py-3.5 text-espresso;
+  }
+  .btn-ghost:hover {
+    @apply border-gold/70 bg-white;
+    transform: translateY(-2px);
+  }
+}
+
+@layer utilities {
+  .tracking-luxe {
+    letter-spacing: 0.28em;
+  }
+  .shadow-soft {
+    box-shadow:
+      0 1px 2px rgba(42, 36, 28, 0.04),
+      0 12px 40px -18px rgba(42, 36, 28, 0.14);
+  }
+}
+
+/* Respeita a preferência por menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
