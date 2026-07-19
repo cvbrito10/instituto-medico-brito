@@ -10,7 +10,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export function CTA() {
   const { open } = useAgendamento();
-  const { contato } = useContent();
+  const { contato, cta } = useContent();
 
   return (
     <section className="relative px-6 py-20 lg:py-28">
@@ -50,7 +50,7 @@ export function CTA() {
               transition={{ duration: 0.8, delay: 0.05, ease }}
               className="mx-auto mt-6 max-w-2xl font-display text-4xl leading-[1.1] text-espresso sm:text-5xl"
             >
-              Sua transformação começa com uma avaliação médica personalizada.
+              {cta.titulo}
             </motion.h2>
 
             <motion.p
@@ -60,8 +60,7 @@ export function CTA() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mx-auto mt-5 max-w-xl text-[0.98rem] leading-relaxed text-espresso-soft"
             >
-              Agende sua consulta e descubra um plano desenvolvido
-              exclusivamente para você.
+              {cta.texto}
             </motion.p>
 
             <motion.div
@@ -73,7 +72,7 @@ export function CTA() {
             >
               <button onClick={open} className="btn-primary px-9 py-4 text-base">
                 <Calendar size={18} strokeWidth={1.7} />
-                Agendar Consulta
+                {cta.botao}
               </button>
               <p className="mt-5 font-sans text-[0.76rem] uppercase tracking-[0.18em] text-bronze">
                 Atendimento pelo WhatsApp · {contato.whatsappDisplay}

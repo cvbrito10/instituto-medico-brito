@@ -4,30 +4,26 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { CalendarCheck, UserRound, ClipboardList, FileHeart, TrendingUp, type LucideIcon } from 'lucide-react';
 import { GoldDivider } from './GoldDivider';
 import { useAgendamento } from './AgendamentoModal';
+import { useContent } from './ContentProvider';
 
-type Step = { icon: LucideIcon; title: string; desc: string };
-
-const STEPS: Step[] = [
-  { icon: CalendarCheck, title: 'Agendamento', desc: 'Você entra em contato e reservamos o melhor horário para o seu atendimento.' },
-  { icon: UserRound, title: 'Consulta Médica', desc: 'Escuta atenta da sua história clínica, objetivos e estilo de vida.' },
-  { icon: ClipboardList, title: 'Avaliação Clínica Completa', desc: 'Análise de metabolismo, composição corporal, exames e fatores hormonais.' },
-  { icon: FileHeart, title: 'Plano Individualizado', desc: 'Um protocolo desenhado exclusivamente para o seu organismo.' },
-  { icon: TrendingUp, title: 'Acompanhamento Contínuo', desc: 'Monitoramento da evolução e ajustes ao longo de toda a jornada.' },
-];
+const ICONS = [
+  CalendarCheck, UserRound, ClipboardList, FileHeart, TrendingUp,
+] as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function ComoFunciona() {
   const { open } = useAgendamento();
   const reduce = useReducedMotion();
+  const { comoFunciona } = useContent();
 
   return (
     <section id="como-funciona" className="relative py-24 lg:py-32">
       <div className="container-luxe">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">A jornada</p>
+          <p className="eyebrow">{comoFunciona.eyebrow}</p>
           <h2 className="mt-3 font-display text-4xl leading-tight text-espresso sm:text-[2.9rem]">
-            Como Funciona
+            {comoFunciona.titulo}
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
@@ -42,12 +38,12 @@ export function ComoFunciona() {
           />
 
           <ol className="space-y-8">
-            {STEPS.map((s, i) => {
-              const Icon = s.icon;
+            {comoFunciona.passos.map((s, i) => {
+              const Icon = ICONS[i % ICONS.length];
               const alignRight = i % 2 === 1;
               return (
                 <motion.li
-                  key={s.title}
+                  key={i}
                   initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '0px 0px -12% 0px' }}
@@ -72,10 +68,10 @@ export function ComoFunciona() {
 
                   <div className="pt-1">
                     <h3 className="font-display text-2xl leading-tight text-espresso">
-                      {s.title}
+                      {s.titulo}
                     </h3>
                     <p className="mt-1.5 text-[0.88rem] leading-relaxed text-espresso-soft">
-                      {s.desc}
+                      {s.descricao}
                     </p>
                   </div>
                 </motion.li>
@@ -86,7 +82,7 @@ export function ComoFunciona() {
 
         <div className="mt-14 text-center">
           <button onClick={open} className="btn-primary">
-            Iniciar minha jornada
+            {comoFunciona.cta}
           </button>
         </div>
       </div>

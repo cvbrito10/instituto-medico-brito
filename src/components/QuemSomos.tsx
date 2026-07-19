@@ -6,27 +6,38 @@ import { Monogram } from './Monogram';
 import { useContent } from './ContentProvider';
 
 export function QuemSomos() {
-  const { sobre, medicos } = useContent();
+  const { sobre, medicos, assets } = useContent();
 
   return (
     <section id="sobre" className="relative py-24 lg:py-32">
       <div className="container-luxe grid items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
         <Reveal className="order-2 lg:order-1">
           <div className="relative mx-auto aspect-square w-full max-w-sm">
-            <div className="absolute inset-0 rounded-full border border-gold/20" />
-            <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white to-ivory shadow-soft" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <Monogram className="h-28 w-28" />
-              <span className="font-sans text-[0.62rem] uppercase tracking-[0.28em] text-bronze">
-                Evolução com saúde
-              </span>
-            </div>
+            {assets.sobreUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={assets.sobreUrl}
+                alt={sobre.selo}
+                className="h-full w-full rounded-full border border-gold/20 object-cover shadow-soft"
+              />
+            ) : (
+              <>
+                <div className="absolute inset-0 rounded-full border border-gold/20" />
+                <div className="absolute inset-6 rounded-full bg-gradient-to-br from-white to-ivory shadow-soft" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                  <Monogram className="h-28 w-28" />
+                  <span className="font-sans text-[0.62rem] uppercase tracking-[0.28em] text-bronze">
+                    {sobre.selo}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </Reveal>
 
         <div className="order-1 lg:order-2">
           <Reveal>
-            <p className="eyebrow">Quem Somos</p>
+            <p className="eyebrow">{sobre.eyebrow}</p>
             <h2 className="mt-3 max-w-xl font-display text-4xl leading-[1.1] text-espresso sm:text-[2.9rem]">
               {sobre.titulo}
             </h2>

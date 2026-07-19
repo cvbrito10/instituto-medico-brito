@@ -13,32 +13,25 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { GoldDivider } from './GoldDivider';
+import { useContent } from './ContentProvider';
 
-type Result = { icon: LucideIcon; title: string };
-
-const RESULTS: Result[] = [
-  { icon: PersonStanding, title: 'Melhora da composição corporal' },
-  { icon: BatteryCharging, title: 'Melhora da disposição' },
-  { icon: Gauge, title: 'Melhora do metabolismo' },
-  { icon: Scale, title: 'Controle hormonal' },
-  { icon: ShieldCheck, title: 'Redução da inflamação' },
-  { icon: Moon, title: 'Melhora do sono' },
-  { icon: Heart, title: 'Qualidade de vida' },
-  { icon: Smile, title: 'Bem-estar' },
-];
+const ICONS = [
+  PersonStanding, BatteryCharging, Gauge, Scale, ShieldCheck, Moon, Heart, Smile,
+] as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Resultados() {
   const reduce = useReducedMotion();
+  const { resultados } = useContent();
 
   return (
     <section id="resultados" className="relative py-24 lg:py-32">
       <div className="container-luxe">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">O caminho possível</p>
+          <p className="eyebrow">{resultados.eyebrow}</p>
           <h2 className="mt-3 font-display text-4xl leading-tight text-espresso sm:text-[2.9rem]">
-            Resultados Esperados
+            {resultados.titulo}
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
@@ -46,11 +39,11 @@ export function Resultados() {
         </div>
 
         <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {RESULTS.map((r, i) => {
-            const Icon = r.icon;
+          {resultados.itens.map((r, i) => {
+            const Icon = ICONS[i % ICONS.length];
             return (
               <motion.div
-                key={r.title}
+                key={i}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '0px 0px -8% 0px' }}
@@ -61,7 +54,7 @@ export function Resultados() {
                   <Icon size={20} strokeWidth={1.4} />
                 </span>
                 <h3 className="font-display text-[1.15rem] leading-tight text-espresso">
-                  {r.title}
+                  {r}
                 </h3>
               </motion.div>
             );
@@ -75,10 +68,7 @@ export function Resultados() {
           transition={{ duration: 0.8 }}
           className="mx-auto mt-12 max-w-2xl text-center text-[0.78rem] leading-relaxed text-espresso-soft/80"
         >
-          Os resultados variam de pessoa para pessoa e dependem de fatores
-          individuais, adesão ao tratamento e avaliação clínica. Não há promessa
-          ou garantia de resultados específicos. As informações desta página têm
-          caráter informativo e não substituem a consulta médica.
+          {resultados.disclaimer}
         </motion.p>
       </div>
     </section>

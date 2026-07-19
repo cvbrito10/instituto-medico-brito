@@ -2,14 +2,13 @@
 
 import { useContent } from './ContentProvider';
 import { waLink } from '@/lib/content';
-import { WHATSAPP_MESSAGES } from '@/lib/constants';
 
 export function WhatsAppFloat() {
-  const { contato } = useContent();
+  const { contato, whatsapp } = useContent();
 
   return (
     <a
-      href={waLink(contato.whatsappNumber, WHATSAPP_MESSAGES.default)}
+      href={waLink(contato.whatsappNumber, whatsapp.mensagemPadrao)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"

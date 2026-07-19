@@ -13,56 +13,17 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { GoldDivider } from './GoldDivider';
+import { useContent } from './ContentProvider';
 
-type Protocolo = { icon: LucideIcon; title: string; desc: string };
-
-const PROTOCOLOS: Protocolo[] = [
-  {
-    icon: Stethoscope,
-    title: 'Acompanhamento Médico Personalizado',
-    desc: 'Condução clínica próxima, com ajustes contínuos conforme sua evolução.',
-  },
-  {
-    icon: Salad,
-    title: 'Estratégias para Emagrecimento Saudável',
-    desc: 'Abordagem sustentável, respeitando seu metabolismo e sua rotina.',
-  },
-  {
-    icon: Activity,
-    title: 'Tratamento Metabólico',
-    desc: 'Cuidado com glicose, lipídios e demais marcadores da sua saúde.',
-  },
-  {
-    icon: Syringe,
-    title: 'Tirzepatida e Outras Medicações',
-    desc: 'Quando clinicamente indicadas, com critério e segurança.',
-  },
-  {
-    icon: Droplets,
-    title: 'Protocolos com Injetáveis',
-    desc: 'Recursos terapêuticos aplicados de forma individualizada.',
-  },
-  {
-    icon: Pill,
-    title: 'Suplementação Individualizada',
-    desc: 'Definida a partir de exames e das suas necessidades reais.',
-  },
-  {
-    icon: HeartPulse,
-    title: 'Reposição Hormonal',
-    desc: 'Avaliação criteriosa do equilíbrio hormonal e do bem-estar.',
-  },
-  {
-    icon: LineChart,
-    title: 'Acompanhamento Contínuo da Evolução',
-    desc: 'Monitoramento de resultados e refinamento do seu plano.',
-  },
-];
+const ICONS = [
+  Stethoscope, Salad, Activity, Syringe, Droplets, Pill, HeartPulse, LineChart,
+] as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Protocolos() {
   const reduce = useReducedMotion();
+  const { protocolos } = useContent();
 
   return (
     <section
@@ -78,7 +39,7 @@ export function Protocolos() {
             transition={{ duration: 0.7 }}
             className="eyebrow"
           >
-            O que oferecemos
+            {protocolos.eyebrow}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 18 }}
@@ -87,7 +48,7 @@ export function Protocolos() {
             transition={{ duration: 0.8, delay: 0.05, ease }}
             className="mt-3 font-display text-4xl leading-tight text-espresso sm:text-[2.9rem]"
           >
-            Protocolos Personalizados
+            {protocolos.titulo}
           </motion.h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
@@ -95,11 +56,11 @@ export function Protocolos() {
         </div>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PROTOCOLOS.map((p, i) => {
-            const Icon = p.icon;
+          {protocolos.itens.map((p, i) => {
+            const Icon = ICONS[i % ICONS.length];
             return (
               <motion.article
-                key={p.title}
+                key={i}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 26 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '0px 0px -8% 0px' }}
@@ -115,10 +76,10 @@ export function Protocolos() {
                 </span>
 
                 <h3 className="mt-5 font-display text-[1.35rem] leading-tight text-espresso">
-                  {p.title}
+                  {p.titulo}
                 </h3>
                 <p className="mt-2.5 text-[0.86rem] leading-relaxed text-espresso-soft">
-                  {p.desc}
+                  {p.descricao}
                 </p>
               </motion.article>
             );

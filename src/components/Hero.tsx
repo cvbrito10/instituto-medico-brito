@@ -7,7 +7,6 @@ import { Monogram } from './Monogram';
 import { useAgendamento } from './AgendamentoModal';
 import { useContent } from './ContentProvider';
 import { waLink } from '@/lib/content';
-import { WHATSAPP_MESSAGES } from '@/lib/constants';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -84,16 +83,16 @@ export function Hero() {
           >
             <button onClick={open} className="btn-primary">
               <Calendar size={17} strokeWidth={1.7} />
-              Agendar Consulta
+              {hero.ctaPrimario}
             </button>
             <a
-              href={waLink(contato.whatsappNumber, WHATSAPP_MESSAGES.consulta)}
+              href={waLink(contato.whatsappNumber, content.whatsapp.mensagemConsulta)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-ghost"
             >
               <MessageCircle size={17} strokeWidth={1.7} />
-              Falar no WhatsApp
+              {hero.ctaSecundario}
             </a>
           </motion.div>
 
@@ -154,11 +153,9 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.7, ease }}
             className="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-2xl border border-gold/20 bg-porcelain/90 px-5 py-3.5 shadow-soft backdrop-blur-sm sm:-left-8"
           >
-            <span className="font-display text-3xl text-gold-fill">100%</span>
+            <span className="font-display text-3xl text-gold-fill">{hero.cardNumero}</span>
             <span className="font-sans text-[0.72rem] uppercase leading-tight tracking-[0.14em] text-espresso-soft">
-              Plano
-              <br />
-              Personalizado
+              {hero.cardTexto}
             </span>
           </motion.div>
         </motion.div>

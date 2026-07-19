@@ -13,24 +13,17 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { GoldDivider } from './GoldDivider';
+import { useContent } from './ContentProvider';
 
-type Item = { icon: LucideIcon; title: string };
-
-const ITEMS: Item[] = [
-  { icon: UserCog, title: 'Medicina Personalizada' },
-  { icon: Handshake, title: 'Atendimento Individualizado' },
-  { icon: ScanSearch, title: 'Avaliação Completa' },
-  { icon: Gem, title: 'Protocolos Exclusivos' },
-  { icon: Repeat, title: 'Acompanhamento Contínuo' },
-  { icon: Award, title: 'Equipe Médica Especializada' },
-  { icon: Sparkles, title: 'Abordagem Integrativa' },
-  { icon: Flame, title: 'Foco na Saúde Metabólica' },
-];
+const ICONS = [
+  UserCog, Handshake, ScanSearch, Gem, Repeat, Award, Sparkles, Flame,
+] as const;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Diferenciais() {
   const reduce = useReducedMotion();
+  const { diferenciais } = useContent();
 
   return (
     <section
@@ -39,9 +32,9 @@ export function Diferenciais() {
     >
       <div className="container-luxe">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Diferenciais</p>
+          <p className="eyebrow">{diferenciais.eyebrow}</p>
           <h2 className="mt-3 font-display text-4xl leading-tight text-espresso sm:text-[2.9rem]">
-            Por que escolher o Instituto Médico Brito?
+            {diferenciais.titulo}
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
@@ -49,11 +42,11 @@ export function Diferenciais() {
         </div>
 
         <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {ITEMS.map((it, i) => {
-            const Icon = it.icon;
+          {diferenciais.itens.map((it, i) => {
+            const Icon = ICONS[i % ICONS.length];
             return (
               <motion.div
-                key={it.title}
+                key={i}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '0px 0px -8% 0px' }}
@@ -64,7 +57,7 @@ export function Diferenciais() {
                   <Icon size={24} strokeWidth={1.3} />
                 </span>
                 <h3 className="mt-4 font-display text-xl leading-tight text-espresso">
-                  {it.title}
+                  {it}
                 </h3>
               </motion.div>
             );

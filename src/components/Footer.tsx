@@ -4,10 +4,9 @@ import { MapPin, Phone, Instagram } from 'lucide-react';
 import { Logo } from './Logo';
 import { useContent } from './ContentProvider';
 import { waLink } from '@/lib/content';
-import { WHATSAPP_MESSAGES } from '@/lib/constants';
 
 export function Footer() {
-  const { contato, medicos } = useContent();
+  const { contato, medicos, footer, whatsapp } = useContent();
   const year = new Date().getFullYear();
 
   return (
@@ -27,8 +26,7 @@ export function Footer() {
               </div>
             </div>
             <p className="mt-5 max-w-xs text-[0.86rem] leading-relaxed text-espresso-soft">
-              Evolução com saúde e bem-estar. Medicina personalizada para
-              emagrecimento, saúde metabólica, reposição hormonal e longevidade.
+              {footer.descricao}
             </p>
           </div>
 
@@ -61,7 +59,7 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Phone size={17} strokeWidth={1.5} className="shrink-0 text-bronze" />
                 <a
-                  href={waLink(contato.whatsappNumber, WHATSAPP_MESSAGES.default)}
+                  href={waLink(contato.whatsappNumber, whatsapp.mensagemPadrao)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-espresso"
