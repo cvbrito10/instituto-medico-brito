@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { Logo } from './Logo';
 import { useAgendamento } from './AgendamentoModal';
+import { useContent } from './ContentProvider';
 import { cn } from '@/lib/utils';
 
 const LINKS = [
@@ -17,6 +18,9 @@ const LINKS = [
 
 export function Navbar() {
   const { open } = useAgendamento();
+  const { assets, marca } = useContent();
+  const hasLogo = !!assets.logoUrl;
+  const showText = !!(marca.nome || marca.subtitulo);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -42,15 +46,21 @@ export function Navbar() {
           className="flex items-center gap-3"
           aria-label="Instituto Médico Brito — início"
         >
-          <Logo className="h-9 w-9" />
-          <span className="flex flex-col leading-none">
-            <span className="font-roman text-[0.95rem] tracking-[0.32em] text-espresso">
-              BRITO
+          <Logo className={hasLogo ? 'h-10 w-auto sm:h-12' : 'h-9 w-9'} />
+          {showText && (
+            <span className="flex flex-col leading-none">
+              {marca.nome && (
+                <span className="font-roman text-[0.95rem] tracking-[0.32em] text-espresso">
+                  {marca.nome}
+                </span>
+              )}
+              {marca.subtitulo && (
+                <span className="mt-1 font-sans text-[0.56rem] uppercase tracking-[0.28em] text-bronze">
+                  {marca.subtitulo}
+                </span>
+              )}
             </span>
-            <span className="mt-1 font-sans text-[0.56rem] uppercase tracking-[0.28em] text-bronze">
-              Instituto Médico
-            </span>
-          </span>
+          )}
         </a>
 
         <div className="hidden items-center gap-9 lg:flex">
@@ -101,7 +111,7 @@ export function Navbar() {
               transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
             >
               <div className="mb-8 flex items-center justify-between">
-                <Logo className="h-9 w-9" />
+                <Logo className={hasLogo ? 'h-11 w-auto' : 'h-9 w-9'} />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Fechar menu"

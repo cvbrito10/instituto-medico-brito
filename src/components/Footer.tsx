@@ -6,7 +6,7 @@ import { useContent } from './ContentProvider';
 import { waLink } from '@/lib/content';
 
 export function Footer() {
-  const { contato, medicos, footer, whatsapp } = useContent();
+  const { contato, medicos, footer, whatsapp, assets, marca } = useContent();
   const year = new Date().getFullYear();
 
   return (
@@ -15,15 +15,21 @@ export function Footer() {
         <div className="grid gap-12 pb-14 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
-              <Logo className="h-11 w-11" />
-              <div className="flex flex-col leading-none">
-                <span className="font-roman text-lg tracking-[0.3em] text-espresso">
-                  BRITO
-                </span>
-                <span className="mt-1 font-sans text-[0.58rem] uppercase tracking-[0.26em] text-bronze">
-                  Instituto Médico
-                </span>
-              </div>
+              <Logo className={assets.logoUrl ? 'h-14 w-auto' : 'h-11 w-11'} />
+              {(marca.nome || marca.subtitulo) && (
+                <div className="flex flex-col leading-none">
+                  {marca.nome && (
+                    <span className="font-roman text-lg tracking-[0.3em] text-espresso">
+                      {marca.nome}
+                    </span>
+                  )}
+                  {marca.subtitulo && (
+                    <span className="mt-1 font-sans text-[0.58rem] uppercase tracking-[0.26em] text-bronze">
+                      {marca.subtitulo}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <p className="mt-5 max-w-xs text-[0.86rem] leading-relaxed text-espresso-soft">
               {footer.descricao}

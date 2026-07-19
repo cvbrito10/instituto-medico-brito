@@ -4,6 +4,10 @@ export type CardItem = { titulo: string; descricao: string };
 
 /** Modelo COMPLETO de conteúdo editável do site. */
 export type SiteContent = {
+  marca: {
+    nome: string;
+    subtitulo: string;
+  };
   hero: {
     titulo: string;
     subtitulo1: string;
@@ -72,6 +76,10 @@ export type SiteContent = {
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
+  marca: {
+    nome: 'BRITO',
+    subtitulo: 'Instituto Médico',
+  },
   hero: {
     titulo:
       'Medicina Personalizada para Emagrecimento, Saúde Metabólica e Longevidade',

@@ -111,6 +111,24 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
             onClear={() => update('assets', { sobreUrl: '' })} />
         </Section>
 
+        {/* MARCA / NOME AO LADO DA LOGO */}
+        <Section title="Nome ao lado da logo">
+          <p className="text-xs leading-relaxed text-espresso-soft/80">
+            Texto exibido ao lado da logo, no topo e no rodapé. Deixe os campos
+            em branco se quiser mostrar apenas a imagem da logo.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Nome (linha principal)">
+              <input className={inp} value={c.marca.nome}
+                onChange={(e) => update('marca', { nome: e.target.value })} />
+            </Field>
+            <Field label="Subtítulo (linha menor)">
+              <input className={inp} value={c.marca.subtitulo}
+                onChange={(e) => update('marca', { subtitulo: e.target.value })} />
+            </Field>
+          </div>
+        </Section>
+
         {/* HERO */}
         <Section title="Topo do site (Hero)">
           <Field label="Título principal">
