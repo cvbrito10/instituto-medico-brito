@@ -111,6 +111,23 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
             onClear={() => update('assets', { sobreUrl: '' })} />
         </Section>
 
+        {/* SEO / PREVIEW DO LINK */}
+        <Section title="Preview do link (WhatsApp / Google)">
+          <p className="text-xs leading-relaxed text-espresso-soft/80">
+            É o título e o texto que aparecem quando o link do site é enviado no
+            WhatsApp ou aparece no Google. A imagem do preview usa a logo enviada
+            acima.
+          </p>
+          <Field label="Título do preview">
+            <input className={inp} value={c.seo.titulo}
+              onChange={(e) => update('seo', { titulo: e.target.value })} />
+          </Field>
+          <Field label="Descrição do preview">
+            <textarea rows={2} className={ta} value={c.seo.descricao}
+              onChange={(e) => update('seo', { descricao: e.target.value })} />
+          </Field>
+        </Section>
+
         {/* MARCA / NOME AO LADO DA LOGO */}
         <Section title="Nome ao lado da logo">
           <p className="text-xs leading-relaxed text-espresso-soft/80">

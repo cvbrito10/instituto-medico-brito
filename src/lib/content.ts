@@ -4,6 +4,10 @@ export type CardItem = { titulo: string; descricao: string };
 
 /** Modelo COMPLETO de conteúdo editável do site. */
 export type SiteContent = {
+  seo: {
+    titulo: string;
+    descricao: string;
+  };
   marca: {
     nome: string;
     subtitulo: string;
@@ -76,6 +80,11 @@ export type SiteContent = {
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
+  seo: {
+    titulo: 'Instituto Médico CV Brito — Medicina Personalizada',
+    descricao:
+      'Cada organismo é único. Seu tratamento também deve ser. Avaliação clínica completa e protocolos personalizados.',
+  },
   marca: {
     nome: 'BRITO',
     subtitulo: 'Instituto Médico',

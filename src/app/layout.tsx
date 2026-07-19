@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Cinzel, Jost } from 'next/font/google';
 import { SITE, CONTACT } from '@/lib/constants';
+import { getSiteContent } from '@/lib/content';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -31,47 +32,54 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE.url),
-  title: {
-    default:
-      'Instituto Médico Brito — Medicina Personalizada para Emagrecimento, Saúde Metabólica e Longevidade',
-    template: '%s · Instituto Médico Brito',
-  },
-  description: SITE.description,
-  keywords: [
-    'medicina personalizada',
-    'emagrecimento',
-    'saúde metabólica',
-    'reposição hormonal',
-    'longevidade',
-    'medicina integrativa',
-    'Instituto Médico Brito',
-  ],
-  authors: [{ name: SITE.name }],
-  creator: SITE.name,
-  alternates: { canonical: '/' },
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: SITE.url,
-    siteName: SITE.name,
-    title: 'Instituto Médico Brito — Medicina Personalizada',
-    description:
-      'Cada organismo é único. Seu tratamento também deve ser. Avaliação clínica completa e protocolos personalizados.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Instituto Médico Brito — Medicina Personalizada',
-    description: SITE.description,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
-  },
-  category: 'health',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getSiteContent();
+  const title = content.seo.titulo || SITE.name;
+  const description = content.seo.descricao || SITE.description;
+  const ogImage = content.assets.logoUrl || '/logo.png';
+
+  return {
+    metadataBase: new URL(SITE.url),
+    title: {
+      default: title,
+      template: '%s · Instituto Médico Brito',
+    },
+    description,
+    keywords: [
+      'medicina personalizada',
+      'emagrecimento',
+      'saúde metabólica',
+      'reposição hormonal',
+      'longevidade',
+      'medicina integrativa',
+      'Instituto Médico Brito',
+    ],
+    authors: [{ name: SITE.name }],
+    creator: SITE.name,
+    alternates: { canonical: '/' },
+    openGraph: {
+      type: 'website',
+      locale: 'pt_BR',
+      url: SITE.url,
+      siteName: SITE.name,
+      title,
+      description,
+      images: [{ url: ogImage, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    },
+    category: 'health',
+  };
+}
 
 const jsonLd = {
   '@context': 'https://schema.org',
