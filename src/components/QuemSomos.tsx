@@ -6,7 +6,7 @@ import { Monogram } from './Monogram';
 import { useContent } from './ContentProvider';
 
 export function QuemSomos() {
-  const { sobre, medicos, assets } = useContent();
+  const { sobre, assets } = useContent();
 
   return (
     <section id="sobre" className="relative py-24 lg:py-32">
@@ -53,14 +53,6 @@ export function QuemSomos() {
           <Reveal delay={0.2}>
             <div className="mt-9">
               <GoldDivider className="ml-0 max-w-[140px]" />
-              <div className="mt-5 flex flex-col">
-                <span className="font-display text-2xl text-espresso">
-                  {medicos.nome1} &amp; {medicos.nome2}
-                </span>
-                <span className="mt-1 font-sans text-[0.7rem] uppercase tracking-[0.22em] text-bronze">
-                  Médicos Responsáveis
-                </span>
-              </div>
             </div>
           </Reveal>
         </div>

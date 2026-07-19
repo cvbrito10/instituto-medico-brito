@@ -19,7 +19,7 @@ export function Hero() {
     target: ref,
     offset: ['start start', 'end start'],
   });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -60]);
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -50]);
 
   const { hero, medicos, assets, contato } = content;
 
@@ -38,8 +38,9 @@ export function Hero() {
         }}
       />
 
-      <div className="container-luxe grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-        <div className="relative">
+      <div className="container-luxe grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-12">
+        {/* BLOCO 1 — TÍTULO E TEXTO */}
+        <div className="relative lg:col-start-1 lg:row-start-1">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,12 +75,72 @@ export function Hero() {
               {hero.subtitulo2}
             </p>
           </motion.div>
+        </div>
 
+        {/* BLOCO 2 — FOTO DOS MÉDICOS + ASSINATURA */}
+        <div className="relative mx-auto w-full max-w-md lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:max-w-none lg:self-center">
+          <motion.div
+            style={{ y: portraitY }}
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.1, delay: 0.2, ease }}
+            className="relative"
+          >
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] border border-gold/25 bg-gradient-to-b from-ivory to-linen shadow-lift">
+              {assets.medicosUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={assets.medicosUrl}
+                  alt={`${medicos.nome1} e ${medicos.nome2}`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-5 p-8 text-center">
+                  <Monogram className="h-24 w-24 opacity-90" />
+                  <div className="gold-thread max-w-[120px]" />
+                  <p className="font-sans text-[0.68rem] uppercase tracking-[0.24em] text-bronze">
+                    Corpo Clínico
+                  </p>
+                  <p className="mt-1 max-w-[220px] font-sans text-[0.7rem] leading-relaxed text-espresso-soft/70">
+                    Envie a foto dos médicos pelo painel
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7, ease }}
+              className="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-2xl border border-gold/20 bg-porcelain/90 px-5 py-3.5 shadow-soft backdrop-blur-sm sm:-left-8"
+            >
+              <span className="font-display text-3xl text-gold-fill">
+                {hero.cardNumero}
+              </span>
+              <span className="font-sans text-[0.72rem] uppercase leading-tight tracking-[0.14em] text-espresso-soft">
+                {hero.cardTexto}
+              </span>
+            </motion.div>
+          </motion.div>
+
+          {/* Assinatura dos médicos, logo abaixo da foto */}
+          <div className="mt-12 text-center">
+            <p className="font-display text-2xl leading-tight text-espresso">
+              {medicos.nome1} &amp; {medicos.nome2}
+            </p>
+            <p className="mt-1.5 font-sans text-[0.7rem] uppercase tracking-[0.22em] text-bronze">
+              Médicos Responsáveis
+            </p>
+          </div>
+        </div>
+
+        {/* BLOCO 3 — BOTÕES E SELOS (abaixo da foto no mobile) */}
+        <div className="lg:col-start-1 lg:row-start-2">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35, ease }}
-            className="mt-9 flex flex-wrap items-center gap-3.5"
+            className="flex flex-wrap items-center gap-3.5"
           >
             <button onClick={open} className="btn-primary">
               <Calendar size={17} strokeWidth={1.7} />
@@ -100,7 +161,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.5 }}
-            className="mt-10 grid max-w-lg grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2"
+            className="mt-8 grid max-w-lg grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2"
           >
             {hero.badges.map((b) => (
               <li key={b} className="flex items-center gap-2.5">
@@ -114,51 +175,6 @@ export function Hero() {
             ))}
           </motion.ul>
         </div>
-
-        <motion.div
-          style={{ y: portraitY }}
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.1, delay: 0.2, ease }}
-          className="relative mx-auto w-full max-w-md lg:max-w-none"
-        >
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] border border-gold/25 bg-gradient-to-b from-ivory to-linen shadow-lift">
-            {assets.medicosUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={assets.medicosUrl}
-                alt={`${medicos.nome1} e ${medicos.nome2}`}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full flex-col items-center justify-center gap-5 p-8 text-center">
-                <Monogram className="h-24 w-24 opacity-90" />
-                <div className="gold-thread max-w-[120px]" />
-                <p className="font-display text-2xl text-espresso">
-                  {medicos.nome1} &amp; {medicos.nome2}
-                </p>
-                <p className="font-sans text-[0.68rem] uppercase tracking-[0.24em] text-bronze">
-                  Corpo Clínico
-                </p>
-                <p className="mt-1 max-w-[220px] font-sans text-[0.7rem] leading-relaxed text-espresso-soft/70">
-                  Envie a foto dos médicos pelo painel
-                </p>
-              </div>
-            )}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7, ease }}
-            className="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-2xl border border-gold/20 bg-porcelain/90 px-5 py-3.5 shadow-soft backdrop-blur-sm sm:-left-8"
-          >
-            <span className="font-display text-3xl text-gold-fill">{hero.cardNumero}</span>
-            <span className="font-sans text-[0.72rem] uppercase leading-tight tracking-[0.14em] text-espresso-soft">
-              {hero.cardTexto}
-            </span>
-          </motion.div>
-        </motion.div>
       </div>
     </section>
   );
