@@ -4,7 +4,7 @@ export const SITE = {
   url:
     process.env.NEXT_PUBLIC_SITE_URL ?? 'https://institutomedicobrito.com.br',
   description:
-    'Medicina personalizada para emagrecimento, saúde metabólica, reposição hormonal e longevidade. Avaliação clínica completa e protocolos individualizados.',
+    'Medicina personalizada em saúde feminina e masculina, emagrecimento, saúde metabólica, reposição hormonal e longevidade. Avaliação clínica completa e protocolos individualizados.',
 } as const;
 
 export const CONTACT = {
