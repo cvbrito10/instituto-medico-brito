@@ -2,8 +2,8 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import {
-  Venus,
-  Mars,
+  Flower2,
+  Dumbbell,
   Scale,
   Sparkles,
   Scissors,
@@ -20,12 +20,12 @@ type Categoria = {
 
 const CATEGORIAS: Categoria[] = [
   {
-    icon: Venus,
+    icon: Flower2,
     titulo: 'Saúde Feminina',
     itens: ['Menopausa', 'Vitalidade', 'TPM', 'Libido', 'Endometriose', 'Lipedema'],
   },
   {
-    icon: Mars,
+    icon: Dumbbell,
     titulo: 'Saúde Masculina',
     itens: ['Hipogonadismo', 'Vitalidade', 'Performance', 'Longevidade'],
   },
