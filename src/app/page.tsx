@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { QuemSomos } from '@/components/QuemSomos';
 import { Protocolos } from '@/components/Protocolos';
+import { MenuVitalidade } from '@/components/MenuVitalidade';
 import { ComoFunciona } from '@/components/ComoFunciona';
 import { Diferenciais } from '@/components/Diferenciais';
 import { Resultados } from '@/components/Resultados';
@@ -27,6 +28,7 @@ export default async function Home() {
           <Hero />
           <QuemSomos />
           <Protocolos />
+          <MenuVitalidade />
           <ComoFunciona />
           <Diferenciais />
           <Resultados />

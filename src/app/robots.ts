@@ -3,7 +3,7 @@ import { SITE } from '@/lib/constants';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: '*', allow: '/' },
+    rules: { userAgent: '*', allow: '/', disallow: ['/preconsulta'] },
     sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

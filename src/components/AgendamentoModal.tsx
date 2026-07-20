@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X, Loader2, Check, Phone } from 'lucide-react';
-import { OBJETIVOS } from '@/lib/constants';
+import { OBJETIVOS_GRUPOS } from '@/lib/constants';
 import { waLink } from '@/lib/content';
 import { useContent } from './ContentProvider';
 import { Monogram } from './Monogram';
@@ -235,10 +235,14 @@ export function AgendamentoProvider({ children }: { children: ReactNode }) {
                           }}
                         >
                           <option value="">Selecione</option>
-                          {OBJETIVOS.map((o) => (
-                            <option key={o} value={o}>
-                              {o}
-                            </option>
+                          {OBJETIVOS_GRUPOS.map((g) => (
+                            <optgroup key={g.grupo} label={g.grupo}>
+                              {g.itens.map((o) => (
+                                <option key={`${g.grupo}-${o}`} value={o}>
+                                  {o}
+                                </option>
+                              ))}
+                            </optgroup>
                           ))}
                         </select>
                       </Field>

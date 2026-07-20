@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 const LINKS = [
   { href: '#sobre', label: 'Quem Somos' },
   { href: '#protocolos', label: 'Protocolos' },
+  { href: '#menu-vitalidade', label: 'Menu de Vitalidade' },
   { href: '#como-funciona', label: 'Como Funciona' },
   { href: '#diferenciais', label: 'Diferenciais' },
   { href: '#resultados', label: 'Resultados' },

@@ -42,11 +42,41 @@ export const WHATSAPP_MESSAGES = {
     'Olá! Vim pelo site do Instituto Médico Brito e gostaria de tirar algumas dúvidas.',
 } as const;
 
-export const OBJETIVOS = [
-  'Emagrecimento',
-  'Saúde metabólica',
-  'Reposição hormonal',
-  'Longevidade',
-  'Qualidade de vida',
-  'Ainda não sei / Avaliação geral',
+/**
+ * Menu de Vitalidade — usado no seletor "Objetivo principal" do formulário
+ * de agendamento, agrupado por especialidade.
+ */
+export const OBJETIVOS_GRUPOS = [
+  {
+    grupo: 'Saúde Feminina',
+    itens: ['Menopausa', 'Vitalidade Feminina', 'TPM', 'Libido', 'Endometriose', 'Lipedema'],
+  },
+  {
+    grupo: 'Saúde Masculina',
+    itens: ['Hipogonadismo', 'Vitalidade Masculina', 'Performance', 'Longevidade Masculina'],
+  },
+  {
+    grupo: 'Metabolismo e Composição Corporal',
+    itens: ['Obesidade', 'Emagrecimento', 'Preservação Muscular', 'Saúde Metabólica'],
+  },
+  {
+    grupo: 'Sala de Vitalidade',
+    itens: [
+      'Protocolos Injetáveis',
+      'Reposição de Nutrientes',
+      'Performance e Energia',
+      'Imunidade e Longevidade',
+    ],
+  },
+  {
+    grupo: 'Tricologia',
+    itens: ['Saúde Capilar', 'Protocolos Personalizados', 'Exossomos e Tecnologias Avançadas'],
+  },
+  {
+    grupo: 'Outro',
+    itens: ['Ainda não sei / Avaliação geral'],
+  },
 ] as const;
+
+/** Lista achatada, mantida para compatibilidade com trechos que precisem de todos os valores. */
+export const OBJETIVOS = OBJETIVOS_GRUPOS.flatMap((g) => g.itens);

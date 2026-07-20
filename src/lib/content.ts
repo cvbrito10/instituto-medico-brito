@@ -81,9 +81,9 @@ export type SiteContent = {
 
 export const DEFAULT_CONTENT: SiteContent = {
   seo: {
-    titulo: 'Instituto Médico CV Brito — Medicina Personalizada',
+    titulo: 'Instituto Médico CV Brito — Saúde Feminina e Medicina Personalizada',
     descricao:
-      'Cada organismo é único. Seu tratamento também deve ser. Avaliação clínica completa e protocolos personalizados.',
+      'Cuidado médico individualizado em saúde feminina e masculina, emagrecimento, saúde metabólica e longevidade. Avaliação clínica completa e protocolos personalizados para você e seu casal.',
   },
   marca: {
     nome: 'BRITO',
@@ -91,15 +91,16 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   hero: {
     titulo:
-      'Medicina Personalizada para Emagrecimento, Saúde Metabólica e Longevidade',
-    subtitulo1: 'Cada organismo é único. Seu tratamento também deve ser.',
+      'Medicina Personalizada para a Saúde da Mulher, em Cada Fase da Vida',
+    subtitulo1:
+      'Do equilíbrio hormonal ao emagrecimento saudável — cuidado médico feito sob medida para você e para quem você ama.',
     subtitulo2:
-      'Acompanhamento médico individualizado baseado em ciência, avaliação clínica completa e protocolos personalizados.',
+      'Acompanhamento individualizado em saúde feminina e masculina, com foco também em emagrecimento, saúde metabólica e longevidade — ciência, avaliação clínica completa e protocolos personalizados para o seu casal.',
     badges: [
+      'Foco em Saúde Feminina',
       'Atendimento Individualizado',
       'Avaliação Completa',
       'Protocolos Personalizados',
-      'Medicina Baseada em Evidências',
     ],
     ctaPrimario: 'Agendar Consulta',
     ctaSecundario: 'Falar no WhatsApp',
