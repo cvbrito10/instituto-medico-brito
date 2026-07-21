@@ -47,7 +47,7 @@ export function Navbar() {
           className="flex items-center gap-3"
           aria-label="Instituto Médico Brito — início"
         >
-          <Logo className={hasLogo ? 'h-10 w-auto sm:h-12' : 'h-9 w-9'} />
+          <Logo className={hasLogo ? 'h-14 w-auto sm:h-16' : 'h-9 w-9'} />
           {showText && (
             <span className="flex flex-col leading-none">
               {marca.nome && (
@@ -112,7 +112,7 @@ export function Navbar() {
               transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
             >
               <div className="mb-8 flex items-center justify-between">
-                <Logo className={hasLogo ? 'h-11 w-auto' : 'h-9 w-9'} />
+                <Logo className={hasLogo ? 'h-14 w-auto' : 'h-9 w-9'} />
                 <button
                   onClick={() => setMenuOpen(false)}
                   aria-label="Fechar menu"

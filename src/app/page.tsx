@@ -8,8 +8,12 @@ import { Protocolos } from '@/components/Protocolos';
 import { MenuVitalidade } from '@/components/MenuVitalidade';
 import { ComoFunciona } from '@/components/ComoFunciona';
 import { Diferenciais } from '@/components/Diferenciais';
+import { VideosDuvidas } from '@/components/VideosDuvidas';
 import { Resultados } from '@/components/Resultados';
+import { GaleriaViagens } from '@/components/GaleriaViagens';
 import { CTA } from '@/components/CTA';
+import { MaterialGratuito } from '@/components/MaterialGratuito';
+import { Depoimentos } from '@/components/Depoimentos';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
 
@@ -31,9 +35,13 @@ export default async function Home() {
           <MenuVitalidade />
           <ComoFunciona />
           <Diferenciais />
+          <VideosDuvidas />
           <Resultados />
+          <GaleriaViagens />
           <CTA />
+          <MaterialGratuito />
         </main>
+        <Depoimentos />
         <Footer />
         <WhatsAppFloat />
       </AgendamentoProvider>

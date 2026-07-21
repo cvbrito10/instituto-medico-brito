@@ -62,7 +62,7 @@ export function MenuVitalidade() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 flex flex-wrap justify-center gap-5">
           {menuVitalidade.categorias.map((cat, i) => {
             const Icon = ICONS[i % ICONS.length];
             return (
@@ -73,7 +73,7 @@ export function MenuVitalidade() {
                 viewport={{ once: true, margin: '0px 0px -8% 0px' }}
                 transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease }}
                 whileHover={reduce ? undefined : { y: -8 }}
-                className="group relative overflow-hidden rounded-2xl border border-gold/15 bg-white/70 p-7 shadow-soft transition-shadow duration-300 hover:shadow-lift"
+                className="group relative flex w-full flex-col overflow-hidden rounded-2xl border border-gold/15 bg-white/70 p-7 shadow-soft transition-shadow duration-300 hover:shadow-lift sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.84rem)]"
               >
                 <span className="absolute inset-x-0 top-0 h-[3px] scale-x-0 bg-gold-fade transition-transform duration-500 group-hover:scale-x-100" />
 

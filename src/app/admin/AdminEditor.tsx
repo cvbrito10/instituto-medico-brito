@@ -68,6 +68,23 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
     update('assets', { [key]: data.publicUrl } as Partial<SiteContent['assets']>);
   }
 
+  /** Upload genérico para arquivos avulsos (fotos de depoimentos, galeria, PDF do material). */
+  async function uploadGeneric(file: File, prefix: string): Promise<string | null> {
+    const supabase = createSupabaseBrowserClient();
+    const ext = file.name.split('.').pop() ?? 'bin';
+    const path = `${prefix}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from('site-assets')
+      .upload(path, file, { upsert: true, cacheControl: '3600' });
+    if (error) {
+      setSave('error');
+      setMsg('Falha no upload: ' + error.message);
+      return null;
+    }
+    const { data } = supabase.storage.from('site-assets').getPublicUrl(path);
+    return data.publicUrl;
+  }
+
   return (
     <main className="min-h-screen pb-28">
       <header className="sticky top-0 z-10 glass border-b border-gold/15">
@@ -334,6 +351,34 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
           />
         </Section>
 
+        {/* VÍDEOS */}
+        <Section title="Vídeos — Tire suas dúvidas (YouTube)">
+          <label className="flex items-center gap-2.5">
+            <input type="checkbox" checked={c.videos.ativo}
+              onChange={(e) => update('videos', { ativo: e.target.checked })}
+              className="h-4 w-4 accent-[#C9A66B]" />
+            <span className="text-sm text-espresso">Seção ativa na landing</span>
+          </label>
+          <TwoCol>
+            <Field label="Rótulo">
+              <input className={inp} value={c.videos.eyebrow}
+                onChange={(e) => update('videos', { eyebrow: e.target.value })} />
+            </Field>
+            <Field label="Título da seção">
+              <input className={inp} value={c.videos.titulo}
+                onChange={(e) => update('videos', { titulo: e.target.value })} />
+            </Field>
+          </TwoCol>
+          <Field label="Subtítulo">
+            <textarea rows={2} className={ta} value={c.videos.subtitulo}
+              onChange={(e) => update('videos', { subtitulo: e.target.value })} />
+          </Field>
+          <VideoListEditor
+            items={c.videos.itens}
+            onChange={(itens) => update('videos', { itens })}
+          />
+        </Section>
+
         {/* RESULTADOS */}
         <Section title="Resultados Esperados">
           <TwoCol>
@@ -357,6 +402,35 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
           </Field>
         </Section>
 
+        {/* GALERIA */}
+        <Section title="Mural de Congressos e Treinamentos">
+          <label className="flex items-center gap-2.5">
+            <input type="checkbox" checked={c.galeria.ativo}
+              onChange={(e) => update('galeria', { ativo: e.target.checked })}
+              className="h-4 w-4 accent-[#C9A66B]" />
+            <span className="text-sm text-espresso">Seção ativa na landing</span>
+          </label>
+          <TwoCol>
+            <Field label="Rótulo">
+              <input className={inp} value={c.galeria.eyebrow}
+                onChange={(e) => update('galeria', { eyebrow: e.target.value })} />
+            </Field>
+            <Field label="Título da seção">
+              <input className={inp} value={c.galeria.titulo}
+                onChange={(e) => update('galeria', { titulo: e.target.value })} />
+            </Field>
+          </TwoCol>
+          <Field label="Subtítulo">
+            <textarea rows={2} className={ta} value={c.galeria.subtitulo}
+              onChange={(e) => update('galeria', { subtitulo: e.target.value })} />
+          </Field>
+          <GaleriaListEditor
+            items={c.galeria.itens}
+            onChange={(itens) => update('galeria', { itens })}
+            onUpload={uploadGeneric}
+          />
+        </Section>
+
         {/* CHAMADA FINAL */}
         <Section title="Chamada final (CTA)">
           <Field label="Título">
@@ -371,6 +445,65 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
             <input className={inp} value={c.cta.botao}
               onChange={(e) => update('cta', { botao: e.target.value })} />
           </Field>
+        </Section>
+
+        {/* MATERIAL GRATUITO */}
+        <Section title="Material Gratuito (funil de captura)">
+          <label className="flex items-center gap-2.5">
+            <input type="checkbox" checked={c.material.ativo}
+              onChange={(e) => update('material', { ativo: e.target.checked })}
+              className="h-4 w-4 accent-[#C9A66B]" />
+            <span className="text-sm text-espresso">
+              Seção ativa na landing (precisa de um PDF enviado abaixo)
+            </span>
+          </label>
+          <Field label="Título">
+            <input className={inp} value={c.material.titulo}
+              onChange={(e) => update('material', { titulo: e.target.value })} />
+          </Field>
+          <Field label="Descrição">
+            <textarea rows={3} className={ta} value={c.material.descricao}
+              onChange={(e) => update('material', { descricao: e.target.value })} />
+          </Field>
+          <Field label="Texto do botão">
+            <input className={inp} value={c.material.textoBotao}
+              onChange={(e) => update('material', { textoBotao: e.target.value })} />
+          </Field>
+          <ImageField
+            label="Imagem de capa do material (opcional)"
+            hint="Ex.: capa do e-book/guia. Formatos JPG ou PNG."
+            value={c.material.imagemUrl}
+            onUpload={async (f) => {
+              const url = await uploadGeneric(f, 'material-capa');
+              if (url) update('material', { imagemUrl: url });
+            }}
+            onClear={() => update('material', { imagemUrl: '' })}
+          />
+          <PdfField
+            value={c.material.pdfUrl}
+            onUpload={async (f) => {
+              const url = await uploadGeneric(f, 'material-pdf');
+              if (url) update('material', { pdfUrl: url });
+            }}
+            onClear={() => update('material', { pdfUrl: '' })}
+          />
+        </Section>
+
+        {/* DEPOIMENTOS */}
+        <Section title="Depoimentos (fotos de pacientes)">
+          <label className="flex items-center gap-2.5">
+            <input type="checkbox" checked={c.depoimentos.ativo}
+              onChange={(e) => update('depoimentos', { ativo: e.target.checked })}
+              className="h-4 w-4 accent-[#C9A66B]" />
+            <span className="text-sm text-espresso">
+              Seção ativa perto do rodapé (fotos alternam a cada 20 segundos)
+            </span>
+          </label>
+          <DepoimentoListEditor
+            items={c.depoimentos.itens}
+            onChange={(itens) => update('depoimentos', { itens })}
+            onUpload={uploadGeneric}
+          />
         </Section>
 
         {/* PRÉ-CONSULTA */}
@@ -654,6 +787,187 @@ function CampoListEditor({ items, onChange, somentePlaceholder }: {
           />
         </div>
       ))}
+    </div>
+  );
+}
+
+function VideoListEditor({ items, onChange }: {
+  items: { pergunta: string; medico: string; youtubeId: string }[];
+  onChange: (items: { pergunta: string; medico: string; youtubeId: string }[]) => void;
+}) {
+  function set(i: number, patch: Partial<{ pergunta: string; medico: string; youtubeId: string }>) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  }
+  function remove(i: number) {
+    onChange(items.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...items, { pergunta: '', medico: '', youtubeId: '' }]);
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((it, i) => (
+        <div key={i} className="space-y-2 rounded-xl border border-nude-deep/40 bg-white/70 p-4">
+          <input className={inp} placeholder="Pergunta (ex.: Tem dúvidas sobre Menopausa?)"
+            value={it.pergunta} onChange={(e) => set(i, { pergunta: e.target.value })} />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <input className={inp} placeholder="Médico(a) (ex.: Dra. Vanessa Brito)"
+              value={it.medico} onChange={(e) => set(i, { medico: e.target.value })} />
+            <input className={inp} placeholder="ID do vídeo no YouTube (ex.: dQw4w9WgXcQ)"
+              value={it.youtubeId} onChange={(e) => set(i, { youtubeId: e.target.value })} />
+          </div>
+          <button onClick={() => remove(i)} className="text-xs text-red-700 hover:underline">
+            Remover vídeo
+          </button>
+        </div>
+      ))}
+      <button onClick={add} className="text-sm text-bronze hover:underline">
+        + Adicionar vídeo
+      </button>
+    </div>
+  );
+}
+
+function GaleriaListEditor({ items, onChange, onUpload }: {
+  items: { fotoUrl: string; legenda: string }[];
+  onChange: (items: { fotoUrl: string; legenda: string }[]) => void;
+  onUpload: (file: File, prefix: string) => Promise<string | null>;
+}) {
+  function set(i: number, patch: Partial<{ fotoUrl: string; legenda: string }>) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  }
+  function remove(i: number) {
+    onChange(items.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...items, { fotoUrl: '', legenda: '' }]);
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((it, i) => (
+        <div key={i} className="flex flex-col gap-3 rounded-xl border border-nude-deep/40 bg-white/70 p-4 sm:flex-row sm:items-center">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gold/20 bg-porcelain">
+            {it.fotoUrl ? (
+              <img src={it.fotoUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-[0.6rem] text-espresso-soft">sem foto</span>
+            )}
+          </span>
+          <div className="flex-1 space-y-2">
+            <input
+              type="file"
+              accept="image/*"
+              className="block w-full text-xs text-espresso-soft file:mr-3 file:rounded-full file:border-0 file:bg-nude file:px-3 file:py-1.5 file:text-xs file:text-espresso"
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                if (!f) return;
+                const url = await onUpload(f, 'galeria');
+                if (url) set(i, { fotoUrl: url });
+              }}
+            />
+            <input className={inp} placeholder="Legenda (ex.: Congresso Brasileiro de Longevidade — 2025)"
+              value={it.legenda} onChange={(e) => set(i, { legenda: e.target.value })} />
+          </div>
+          <button onClick={() => remove(i)} className="text-xs text-red-700 hover:underline">
+            Remover
+          </button>
+        </div>
+      ))}
+      <button onClick={add} className="text-sm text-bronze hover:underline">
+        + Adicionar foto
+      </button>
+    </div>
+  );
+}
+
+function DepoimentoListEditor({ items, onChange, onUpload }: {
+  items: { fotoUrl: string; nome: string; texto: string }[];
+  onChange: (items: { fotoUrl: string; nome: string; texto: string }[]) => void;
+  onUpload: (file: File, prefix: string) => Promise<string | null>;
+}) {
+  function set(i: number, patch: Partial<{ fotoUrl: string; nome: string; texto: string }>) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  }
+  function remove(i: number) {
+    onChange(items.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...items, { fotoUrl: '', nome: '', texto: '' }]);
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((it, i) => (
+        <div key={i} className="flex flex-col gap-3 rounded-xl border border-nude-deep/40 bg-white/70 p-4 sm:flex-row">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gold/20 bg-porcelain">
+            {it.fotoUrl ? (
+              <img src={it.fotoUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-[0.6rem] text-espresso-soft">sem foto</span>
+            )}
+          </span>
+          <div className="flex-1 space-y-2">
+            <input
+              type="file"
+              accept="image/*"
+              className="block w-full text-xs text-espresso-soft file:mr-3 file:rounded-full file:border-0 file:bg-nude file:px-3 file:py-1.5 file:text-xs file:text-espresso"
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                if (!f) return;
+                const url = await onUpload(f, 'depoimento');
+                if (url) set(i, { fotoUrl: url });
+              }}
+            />
+            <input className={inp} placeholder="Nome do paciente (ex.: Andressa Pena — Cacoal)"
+              value={it.nome} onChange={(e) => set(i, { nome: e.target.value })} />
+            <textarea rows={2} className={ta} placeholder="Texto do depoimento"
+              value={it.texto} onChange={(e) => set(i, { texto: e.target.value })} />
+          </div>
+          <button onClick={() => remove(i)} className="text-xs text-red-700 hover:underline">
+            Remover
+          </button>
+        </div>
+      ))}
+      <button onClick={add} className="text-sm text-bronze hover:underline">
+        + Adicionar depoimento
+      </button>
+    </div>
+  );
+}
+
+function PdfField({ value, onUpload, onClear }: {
+  value: string;
+  onUpload: (file: File) => void;
+  onClear: () => void;
+}) {
+  return (
+    <div className="rounded-xl border border-nude-deep/40 bg-white/70 p-4">
+      <span className="mb-2 block text-[0.72rem] font-medium uppercase tracking-[0.14em] text-bronze">
+        Arquivo PDF do material
+      </span>
+      {value ? (
+        <div className="mb-2 flex items-center gap-3 text-sm">
+          <a href={value} target="_blank" rel="noopener noreferrer" className="text-bronze hover:underline">
+            Ver PDF atual
+          </a>
+          <button onClick={onClear} className="text-xs text-red-700 hover:underline">
+            Remover
+          </button>
+        </div>
+      ) : (
+        <p className="mb-2 text-xs text-espresso-soft">Nenhum PDF enviado ainda.</p>
+      )}
+      <input
+        type="file"
+        accept="application/pdf"
+        className="block w-full text-xs text-espresso-soft file:mr-3 file:rounded-full file:border-0 file:bg-nude file:px-3 file:py-1.5 file:text-xs file:text-espresso"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) onUpload(f);
+        }}
+      />
     </div>
   );
 }

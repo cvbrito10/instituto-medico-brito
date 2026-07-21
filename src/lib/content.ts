@@ -99,6 +99,32 @@ export type SiteContent = {
     camposSaudeGeral: CampoConfig[];
     camposObjetivos: CampoConfig[];
   };
+  depoimentos: {
+    ativo: boolean;
+    itens: { fotoUrl: string; nome: string; texto: string }[];
+  };
+  videos: {
+    ativo: boolean;
+    eyebrow: string;
+    titulo: string;
+    subtitulo: string;
+    itens: { pergunta: string; medico: string; youtubeId: string }[];
+  };
+  galeria: {
+    ativo: boolean;
+    eyebrow: string;
+    titulo: string;
+    subtitulo: string;
+    itens: { fotoUrl: string; legenda: string }[];
+  };
+  material: {
+    ativo: boolean;
+    titulo: string;
+    descricao: string;
+    textoBotao: string;
+    imagemUrl: string;
+    pdfUrl: string;
+  };
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -313,6 +339,35 @@ export const DEFAULT_CONTENT: SiteContent = {
       { key: 'objetivo2', label: '2', placeholder: 'Segundo objetivo' },
       { key: 'objetivo3', label: '3', placeholder: 'Terceiro objetivo' },
     ],
+  },
+  depoimentos: {
+    ativo: false,
+    itens: [],
+  },
+  videos: {
+    ativo: false,
+    eyebrow: 'Tire suas dúvidas',
+    titulo: 'Perguntas para a Dra. e o Dr.',
+    subtitulo:
+      'Vídeos rápidos com a Dra. Vanessa e o Dr. Claudio respondendo as dúvidas mais comuns.',
+    itens: [],
+  },
+  galeria: {
+    ativo: false,
+    eyebrow: 'Atualização constante',
+    titulo: 'Congressos e Treinamentos',
+    subtitulo:
+      'Nossa equipe médica em constante atualização científica pelo Brasil e pelo mundo.',
+    itens: [],
+  },
+  material: {
+    ativo: false,
+    titulo: 'Baixe nosso guia gratuito',
+    descricao:
+      'Preencha seus dados e receba agora um material exclusivo, preparado pela nossa equipe médica.',
+    textoBotao: 'Quero receber',
+    imagemUrl: '',
+    pdfUrl: '',
   },
 };
 
