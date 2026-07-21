@@ -7,7 +7,7 @@ import {
   Image as ImageIcon, Plus, Trash2,
 } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
-import type { SiteContent, CardItem } from '@/lib/content';
+import type { SiteContent, CardItem, CampoConfig } from '@/lib/content';
 import { Monogram } from '@/components/Monogram';
 
 type Props = { initialContent: SiteContent; userEmail: string };
@@ -148,6 +148,10 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
 
         {/* HERO */}
         <Section title="Topo do site (Hero)">
+          <Field label="Selo acima do título">
+            <input className={inp} value={c.hero.selo}
+              onChange={(e) => update('hero', { selo: e.target.value })} />
+          </Field>
           <Field label="Título principal">
             <textarea rows={2} className={ta} value={c.hero.titulo}
               onChange={(e) => update('hero', { titulo: e.target.value })} />
@@ -260,6 +264,33 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
           />
         </Section>
 
+        {/* MENU DE VITALIDADE */}
+        <Section title="Menu de Vitalidade">
+          <p className="-mt-1 text-xs text-espresso-soft">
+            Essas mesmas categorias abastecem também o menu "Objetivo" do
+            formulário de agendamento — edite aqui e os dois lugares
+            atualizam juntos.
+          </p>
+          <TwoCol>
+            <Field label="Rótulo">
+              <input className={inp} value={c.menuVitalidade.eyebrow}
+                onChange={(e) => update('menuVitalidade', { eyebrow: e.target.value })} />
+            </Field>
+            <Field label="Título da seção">
+              <input className={inp} value={c.menuVitalidade.titulo}
+                onChange={(e) => update('menuVitalidade', { titulo: e.target.value })} />
+            </Field>
+          </TwoCol>
+          <Field label="Subtítulo">
+            <textarea rows={2} className={ta} value={c.menuVitalidade.subtitulo}
+              onChange={(e) => update('menuVitalidade', { subtitulo: e.target.value })} />
+          </Field>
+          <CategoriaListEditor
+            items={c.menuVitalidade.categorias}
+            onChange={(categorias) => update('menuVitalidade', { categorias })}
+          />
+        </Section>
+
         {/* COMO FUNCIONA */}
         <Section title="Como Funciona (jornada)">
           <TwoCol>
@@ -340,6 +371,87 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
             <input className={inp} value={c.cta.botao}
               onChange={(e) => update('cta', { botao: e.target.value })} />
           </Field>
+        </Section>
+
+        {/* PRÉ-CONSULTA */}
+        <Section title="Formulário de Pré-Consulta (aba oculta)">
+          <label className="flex items-center gap-2.5">
+            <input
+              type="checkbox"
+              checked={c.preconsulta.ativo}
+              onChange={(e) => update('preconsulta', { ativo: e.target.checked })}
+              className="h-4 w-4 accent-[#C9A66B]"
+            />
+            <span className="text-sm text-espresso">
+              Formulário ativo (desmarque para pausar a página <code>/preconsulta</code>)
+            </span>
+          </label>
+
+          <TwoCol>
+            <Field label="Assinatura (nomes dos médicos)">
+              <input className={inp} value={c.preconsulta.eyebrow}
+                onChange={(e) => update('preconsulta', { eyebrow: e.target.value })} />
+            </Field>
+            <Field label="WhatsApp que recebe as respostas (só números, com 55 e DDD)">
+              <input className={inp} value={c.preconsulta.whatsappNumero}
+                onChange={(e) => update('preconsulta', { whatsappNumero: e.target.value.replace(/\D/g, '') })} />
+            </Field>
+          </TwoCol>
+          <Field label="Título">
+            <input className={inp} value={c.preconsulta.titulo}
+              onChange={(e) => update('preconsulta', { titulo: e.target.value })} />
+          </Field>
+          <Field label="Subtítulo (abertura)">
+            <textarea rows={2} className={ta} value={c.preconsulta.subtitulo}
+              onChange={(e) => update('preconsulta', { subtitulo: e.target.value })} />
+          </Field>
+          <Field label="Mensagem de fechamento (após enviar)">
+            <textarea rows={2} className={ta} value={c.preconsulta.mensagemFechamento}
+              onChange={(e) => update('preconsulta', { mensagemFechamento: e.target.value })} />
+          </Field>
+
+          <div className="mt-2 border-t border-nude-deep/30 pt-4">
+            <h3 className="mb-3 font-display text-lg text-espresso">Etapa: Dados Pessoais</h3>
+            <CampoListEditor
+              items={c.preconsulta.camposDadosPessoais}
+              onChange={(campos) => update('preconsulta', { camposDadosPessoais: campos })}
+            />
+          </div>
+
+          <div className="mt-2 border-t border-nude-deep/30 pt-4">
+            <h3 className="mb-3 font-display text-lg text-espresso">Etapa: Histórico Ginecológico</h3>
+            <CampoListEditor
+              items={c.preconsulta.camposHistorico}
+              onChange={(campos) => update('preconsulta', { camposHistorico: campos })}
+            />
+          </div>
+
+          <div className="mt-2 border-t border-nude-deep/30 pt-4">
+            <h3 className="mb-3 font-display text-lg text-espresso">Etapa: Saúde Geral</h3>
+            <CampoListEditor
+              items={c.preconsulta.camposSaudeGeral}
+              onChange={(campos) => update('preconsulta', { camposSaudeGeral: campos })}
+            />
+          </div>
+
+          <div className="mt-2 border-t border-nude-deep/30 pt-4">
+            <h3 className="mb-3 font-display text-lg text-espresso">Etapa: Seus Objetivos</h3>
+            <TwoCol>
+              <Field label="Rótulo da pergunta">
+                <input className={inp} value={c.preconsulta.objetivosLabel}
+                  onChange={(e) => update('preconsulta', { objetivosLabel: e.target.value })} />
+              </Field>
+              <Field label="Texto de ajuda">
+                <input className={inp} value={c.preconsulta.objetivosAjuda}
+                  onChange={(e) => update('preconsulta', { objetivosAjuda: e.target.value })} />
+              </Field>
+            </TwoCol>
+            <CampoListEditor
+              items={c.preconsulta.camposObjetivos}
+              onChange={(campos) => update('preconsulta', { camposObjetivos: campos })}
+              somentePlaceholder
+            />
+          </div>
         </Section>
 
         {/* RODAPÉ + CONTATO */}
@@ -482,6 +594,66 @@ function StringListEditor({ items, onChange, addLabel }: {
         className="flex items-center gap-1.5 rounded-full border border-gold/40 px-4 py-2 text-xs text-espresso-soft hover:border-gold hover:text-espresso">
         <Plus size={14} /> {addLabel}
       </button>
+    </div>
+  );
+}
+
+function CategoriaListEditor({ items, onChange }: {
+  items: { titulo: string; itens: string[] }[];
+  onChange: (items: { titulo: string; itens: string[] }[]) => void;
+}) {
+  function setTitulo(i: number, titulo: string) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, titulo } : it)));
+  }
+  function setItensTexto(i: number, texto: string) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, itens: linesToArr(texto) } : it)));
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((it, i) => (
+        <div key={i} className="rounded-xl border border-nude-deep/40 bg-white/70 p-4">
+          <span className="mb-2 block text-[0.68rem] uppercase tracking-[0.14em] text-bronze">
+            Categoria {i + 1}
+          </span>
+          <input className={inp + ' mb-2'} placeholder="Título da categoria" value={it.titulo}
+            onChange={(e) => setTitulo(i, e.target.value)} />
+          <span className="mb-1 block text-[0.68rem] text-espresso-soft">
+            Itens (um por linha)
+          </span>
+          <textarea rows={4} className={ta} value={it.itens.join('\n')}
+            onChange={(e) => setItensTexto(i, e.target.value)} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CampoListEditor({ items, onChange, somentePlaceholder }: {
+  items: CampoConfig[];
+  onChange: (items: CampoConfig[]) => void;
+  somentePlaceholder?: boolean;
+}) {
+  function set(i: number, patch: Partial<CampoConfig>) {
+    onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  }
+
+  return (
+    <div className="space-y-2.5">
+      {items.map((it, i) => (
+        <div key={it.key} className="grid gap-2 rounded-xl border border-nude-deep/40 bg-white/70 p-3 sm:grid-cols-2">
+          {!somentePlaceholder && (
+            <input className={inp} placeholder="Rótulo (pergunta)" value={it.label}
+              onChange={(e) => set(i, { label: e.target.value })} />
+          )}
+          <input
+            className={inp + (somentePlaceholder ? ' sm:col-span-2' : '')}
+            placeholder="Texto de exemplo (placeholder)"
+            value={it.placeholder}
+            onChange={(e) => set(i, { placeholder: e.target.value })}
+          />
+        </div>
+      ))}
     </div>
   );
 }

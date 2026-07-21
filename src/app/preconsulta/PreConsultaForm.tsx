@@ -4,10 +4,10 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Phone, CheckCircle2 } from 'lucide-react';
 import { Monogram } from '@/components/Monogram';
-import { CONTACT, whatsappLink } from '@/lib/constants';
+import { useContent } from '@/components/ContentProvider';
+import { waLink, type CampoConfig } from '@/lib/content';
 
 type FormState = {
-  // Dados pessoais
   nome: string;
   sexo: string;
   dataNascimento: string;
@@ -19,8 +19,6 @@ type FormState = {
   endereco: string;
   comoConheceu: string;
   quemIndicou: string;
-
-  // Histórico Ginecológico
   queixaPrincipal: string;
   historiaResumo: string;
   temFilhos: string;
@@ -34,8 +32,6 @@ type FormState = {
   tpm: string;
   metodoContraceptivo: string;
   ultimoPapanicolau: string;
-
-  // Saúde Geral
   doencasPrevias: string;
   medicamentos: string;
   cirurgias: string;
@@ -48,53 +44,21 @@ type FormState = {
   qualidadeAlimentacao: string;
   evacuaDiariamente: string;
   libido: string;
-
-  // Seus Objetivos
   objetivo1: string;
   objetivo2: string;
   objetivo3: string;
 };
 
 const INITIAL: FormState = {
-  nome: '',
-  sexo: '',
-  dataNascimento: '',
-  cpf: '',
-  rg: '',
-  profissao: '',
-  convenio: '',
-  email: '',
-  endereco: '',
-  comoConheceu: '',
-  quemIndicou: '',
-  queixaPrincipal: '',
-  historiaResumo: '',
-  temFilhos: '',
-  quantosFilhos: '',
-  tipoParto: '',
-  idadeMenarca: '',
-  idadePrimeiraRelacao: '',
-  dum: '',
-  cicloMenstrual: '',
-  fluxo: '',
-  tpm: '',
-  metodoContraceptivo: '',
-  ultimoPapanicolau: '',
-  doencasPrevias: '',
-  medicamentos: '',
-  cirurgias: '',
-  historicoFamiliarCancer: '',
-  peso: '',
-  altura: '',
-  atividadeFisica: '',
-  tabagismo: '',
-  qualidadeSono: '',
-  qualidadeAlimentacao: '',
-  evacuaDiariamente: '',
-  libido: '',
-  objetivo1: '',
-  objetivo2: '',
-  objetivo3: '',
+  nome: '', sexo: '', dataNascimento: '', cpf: '', rg: '', profissao: '',
+  convenio: '', email: '', endereco: '', comoConheceu: '', quemIndicou: '',
+  queixaPrincipal: '', historiaResumo: '', temFilhos: '', quantosFilhos: '',
+  tipoParto: '', idadeMenarca: '', idadePrimeiraRelacao: '', dum: '',
+  cicloMenstrual: '', fluxo: '', tpm: '', metodoContraceptivo: '',
+  ultimoPapanicolau: '', doencasPrevias: '', medicamentos: '', cirurgias: '',
+  historicoFamiliarCancer: '', peso: '', altura: '', atividadeFisica: '',
+  tabagismo: '', qualidadeSono: '', qualidadeAlimentacao: '',
+  evacuaDiariamente: '', libido: '', objetivo1: '', objetivo2: '', objetivo3: '',
 };
 
 const STEP_LABELS = [
@@ -108,10 +72,22 @@ const STEP_LABELS = [
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+// Busca label/placeholder configurados no painel para um campo; cai para um
+// texto padrão se o painel ainda não tiver esse campo (nunca quebra a tela).
+function campo(lista: CampoConfig[], key: string, fallbackLabel = ''): CampoConfig {
+  return lista.find((c) => c.key === key) ?? { key, label: fallbackLabel || key, placeholder: '' };
+}
+
 export function PreConsultaForm() {
+  const { preconsulta } = useContent();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(INITIAL);
   const [sent, setSent] = useState(false);
+
+  const dp = preconsulta.camposDadosPessoais;
+  const hi = preconsulta.camposHistorico;
+  const sg = preconsulta.camposSaudeGeral;
+  const ob = preconsulta.camposObjetivos;
 
   const progress = Math.round((step / (STEP_LABELS.length - 1)) * 100);
 
@@ -130,11 +106,18 @@ export function PreConsultaForm() {
   const next = () => setStep((s) => Math.min(s + 1, STEP_LABELS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const mensagem = useMemo(() => buildMessage(form), [form]);
+  const mensagem = useMemo(
+    () => buildMessage(form, { dp, hi, sg, ob }),
+    [form, dp, hi, sg, ob],
+  );
 
   const enviar = () => {
     setSent(true);
-    window.open(whatsappLink(mensagem), '_blank', 'noopener,noreferrer');
+    window.open(
+      waLink(preconsulta.whatsappNumero, mensagem),
+      '_blank',
+      'noopener,noreferrer',
+    );
   };
 
   return (
@@ -161,13 +144,12 @@ export function PreConsultaForm() {
         {/* Cabeçalho */}
         <div className="mb-10 text-center">
           <Monogram className="mx-auto h-12 w-12" />
-          <p className="eyebrow mt-4">{CONTACT.doctors.join(' & ')}</p>
+          <p className="eyebrow mt-4">{preconsulta.eyebrow}</p>
           <h1 className="mt-2 font-display text-3xl leading-tight text-espresso sm:text-4xl">
-            Formulário de Pré-Consulta
+            {preconsulta.titulo}
           </h1>
           <p className="mx-auto mt-3 max-w-md text-[0.9rem] leading-relaxed text-espresso-soft">
-            Bem-vindo(a) ao seu cuidado. Leva menos de 3 minutos e nos ajuda a
-            conhecer sua história antes mesmo da consulta.
+            {preconsulta.subtitulo}
           </p>
           <p className="mt-3 font-sans text-[0.7rem] uppercase tracking-[0.2em] text-bronze">
             {STEP_LABELS[step]} · {progress}%
@@ -187,46 +169,46 @@ export function PreConsultaForm() {
 
             {step === 1 && (
               <FormSection titulo="Dados Pessoais">
-                <Field label="Nome completo" required>
-                  <input className={inputCls} value={form.nome} onChange={set('nome')} placeholder="Seu nome completo" />
+                <Field label={campo(dp, 'nome', 'Nome completo').label} required>
+                  <input className={inputCls} value={form.nome} onChange={set('nome')} placeholder={campo(dp, 'nome').placeholder} />
                 </Field>
 
-                <Field label="Sexo" required>
+                <Field label={campo(dp, 'sexo', 'Sexo').label} required>
                   <RadioGroup value={form.sexo} onChange={radio('sexo')} options={['Feminino', 'Masculino']} />
                 </Field>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Data de nascimento">
+                  <Field label={campo(dp, 'dataNascimento', 'Data de nascimento').label}>
                     <input type="date" className={inputCls} value={form.dataNascimento} onChange={set('dataNascimento')} />
                   </Field>
-                  <Field label="CPF">
-                    <input className={inputCls} value={form.cpf} onChange={set('cpf')} placeholder="000.000.000-00" />
+                  <Field label={campo(dp, 'cpf', 'CPF').label}>
+                    <input className={inputCls} value={form.cpf} onChange={set('cpf')} placeholder={campo(dp, 'cpf').placeholder} />
                   </Field>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="RG (opcional)">
+                  <Field label={campo(dp, 'rg', 'RG (opcional)').label}>
                     <input className={inputCls} value={form.rg} onChange={set('rg')} />
                   </Field>
-                  <Field label="Profissão (opcional)">
+                  <Field label={campo(dp, 'profissao', 'Profissão (opcional)').label}>
                     <input className={inputCls} value={form.profissao} onChange={set('profissao')} />
                   </Field>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Convênio médico (opcional)">
-                    <input className={inputCls} value={form.convenio} onChange={set('convenio')} placeholder="Particular ou nome do convênio" />
+                  <Field label={campo(dp, 'convenio', 'Convênio médico (opcional)').label}>
+                    <input className={inputCls} value={form.convenio} onChange={set('convenio')} placeholder={campo(dp, 'convenio').placeholder} />
                   </Field>
-                  <Field label="E-mail (opcional)">
+                  <Field label={campo(dp, 'email', 'E-mail (opcional)').label}>
                     <input type="email" className={inputCls} value={form.email} onChange={set('email')} />
                   </Field>
                 </div>
 
-                <Field label="Endereço completo com CEP (opcional)">
+                <Field label={campo(dp, 'endereco', 'Endereço completo com CEP (opcional)').label}>
                   <input className={inputCls} value={form.endereco} onChange={set('endereco')} />
                 </Field>
 
-                <Field label="Como conheceu o Instituto Médico Brito?">
+                <Field label={campo(dp, 'comoConheceu', 'Como conheceu o Instituto Médico Brito?').label}>
                   <select className={selectCls} value={form.comoConheceu} onChange={set('comoConheceu')}>
                     <option value="">Selecione...</option>
                     <option>Instagram</option>
@@ -238,7 +220,7 @@ export function PreConsultaForm() {
                 </Field>
 
                 {form.comoConheceu === 'Indicação' && (
-                  <Field label="Quem lhe indicou?">
+                  <Field label={campo(dp, 'quemIndicou', 'Quem lhe indicou?').label}>
                     <input className={inputCls} value={form.quemIndicou} onChange={set('quemIndicou')} />
                   </Field>
                 )}
@@ -247,42 +229,42 @@ export function PreConsultaForm() {
 
             {step === 2 && (
               <FormSection titulo="Histórico Ginecológico">
-                <Field label="Queixa principal" required>
-                  <textarea rows={3} className={inputCls} value={form.queixaPrincipal} onChange={set('queixaPrincipal')} placeholder="Descreva o motivo principal da sua consulta..." />
+                <Field label={campo(hi, 'queixaPrincipal', 'Queixa principal').label} required>
+                  <textarea rows={3} className={inputCls} value={form.queixaPrincipal} onChange={set('queixaPrincipal')} placeholder={campo(hi, 'queixaPrincipal').placeholder} />
                 </Field>
 
-                <Field label="Sua história (resumo)">
-                  <textarea rows={3} className={inputCls} value={form.historiaResumo} onChange={set('historiaResumo')} placeholder="Conte um pouco sobre sua saúde, trajetória, o que achar relevante..." />
+                <Field label={campo(hi, 'historiaResumo', 'Sua história (resumo)').label}>
+                  <textarea rows={3} className={inputCls} value={form.historiaResumo} onChange={set('historiaResumo')} placeholder={campo(hi, 'historiaResumo').placeholder} />
                 </Field>
 
-                <Field label="Tem filhos?">
+                <Field label={campo(hi, 'temFilhos', 'Tem filhos?').label}>
                   <RadioGroup value={form.temFilhos} onChange={radio('temFilhos')} options={['Sim', 'Não']} />
                 </Field>
 
                 {form.temFilhos === 'Sim' && (
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Quantos filhos?">
+                    <Field label={campo(hi, 'quantosFilhos', 'Quantos filhos?').label}>
                       <input className={inputCls} value={form.quantosFilhos} onChange={set('quantosFilhos')} />
                     </Field>
-                    <Field label="Tipo de parto">
+                    <Field label={campo(hi, 'tipoParto', 'Tipo de parto').label}>
                       <RadioGroup value={form.tipoParto} onChange={radio('tipoParto')} options={['Normal', 'Cesárea', 'Ambos']} />
                     </Field>
                   </div>
                 )}
 
-                <Field label="Com quantos anos menstruou pela 1ª vez?">
-                  <input inputMode="numeric" className={inputCls} value={form.idadeMenarca} onChange={set('idadeMenarca')} placeholder="Ex: 12 anos" />
+                <Field label={campo(hi, 'idadeMenarca', 'Com quantos anos menstruou pela 1ª vez?').label}>
+                  <input inputMode="numeric" className={inputCls} value={form.idadeMenarca} onChange={set('idadeMenarca')} placeholder={campo(hi, 'idadeMenarca').placeholder} />
                 </Field>
 
-                <Field label="Com quantos anos foi sua 1ª relação sexual?">
-                  <input inputMode="numeric" className={inputCls} value={form.idadePrimeiraRelacao} onChange={set('idadePrimeiraRelacao')} placeholder="Ex: 17 anos" />
+                <Field label={campo(hi, 'idadePrimeiraRelacao', 'Com quantos anos foi sua 1ª relação sexual?').label}>
+                  <input inputMode="numeric" className={inputCls} value={form.idadePrimeiraRelacao} onChange={set('idadePrimeiraRelacao')} placeholder={campo(hi, 'idadePrimeiraRelacao').placeholder} />
                 </Field>
 
-                <Field label="Data da última menstruação (DUM)">
+                <Field label={campo(hi, 'dum', 'Data da última menstruação (DUM)').label}>
                   <input type="date" className={inputCls} value={form.dum} onChange={set('dum')} />
                 </Field>
 
-                <Field label="Período do ciclo menstrual">
+                <Field label={campo(hi, 'cicloMenstrual', 'Período do ciclo menstrual').label}>
                   <RadioGroup
                     value={form.cicloMenstrual}
                     onChange={radio('cicloMenstrual')}
@@ -290,73 +272,73 @@ export function PreConsultaForm() {
                   />
                 </Field>
 
-                <Field label="Característica do fluxo">
+                <Field label={campo(hi, 'fluxo', 'Característica do fluxo').label}>
                   <RadioGroup value={form.fluxo} onChange={radio('fluxo')} options={['Leve', 'Moderado', 'Intenso']} />
                 </Field>
 
-                <Field label="Possui TPM?">
+                <Field label={campo(hi, 'tpm', 'Possui TPM?').label}>
                   <RadioGroup value={form.tpm} onChange={radio('tpm')} options={['Sim', 'Não']} />
                 </Field>
 
-                <Field label="Método anticoncepcional atual">
-                  <input className={inputCls} value={form.metodoContraceptivo} onChange={set('metodoContraceptivo')} placeholder="Pílula, DIU, preservativo, nenhum..." />
+                <Field label={campo(hi, 'metodoContraceptivo', 'Método anticoncepcional atual').label}>
+                  <input className={inputCls} value={form.metodoContraceptivo} onChange={set('metodoContraceptivo')} placeholder={campo(hi, 'metodoContraceptivo').placeholder} />
                 </Field>
 
-                <Field label="Quando foi o último Papanicolau?">
-                  <input className={inputCls} value={form.ultimoPapanicolau} onChange={set('ultimoPapanicolau')} placeholder="Mês/Ano ou 'Nunca fiz'" />
+                <Field label={campo(hi, 'ultimoPapanicolau', 'Quando foi o último Papanicolau?').label}>
+                  <input className={inputCls} value={form.ultimoPapanicolau} onChange={set('ultimoPapanicolau')} placeholder={campo(hi, 'ultimoPapanicolau').placeholder} />
                 </Field>
               </FormSection>
             )}
 
             {step === 3 && (
               <FormSection titulo="Saúde Geral">
-                <Field label="Doenças prévias">
-                  <textarea rows={3} className={inputCls} value={form.doencasPrevias} onChange={set('doencasPrevias')} placeholder="Hipertensão, diabetes, tireoide, outras... ou 'Nenhuma'" />
+                <Field label={campo(sg, 'doencasPrevias', 'Doenças prévias').label}>
+                  <textarea rows={3} className={inputCls} value={form.doencasPrevias} onChange={set('doencasPrevias')} placeholder={campo(sg, 'doencasPrevias').placeholder} />
                 </Field>
 
-                <Field label="Medicamentos ou suplementos em uso">
-                  <textarea rows={3} className={inputCls} value={form.medicamentos} onChange={set('medicamentos')} placeholder="Liste os medicamentos/suplementos ou 'Nenhum'" />
+                <Field label={campo(sg, 'medicamentos', 'Medicamentos ou suplementos em uso').label}>
+                  <textarea rows={3} className={inputCls} value={form.medicamentos} onChange={set('medicamentos')} placeholder={campo(sg, 'medicamentos').placeholder} />
                 </Field>
 
-                <Field label="Cirurgias realizadas">
-                  <textarea rows={3} className={inputCls} value={form.cirurgias} onChange={set('cirurgias')} placeholder="Quais cirurgias? Quando? Ou 'Nenhuma'" />
+                <Field label={campo(sg, 'cirurgias', 'Cirurgias realizadas').label}>
+                  <textarea rows={3} className={inputCls} value={form.cirurgias} onChange={set('cirurgias')} placeholder={campo(sg, 'cirurgias').placeholder} />
                 </Field>
 
-                <Field label="Histórico de câncer de mama na família?">
+                <Field label={campo(sg, 'historicoFamiliarCancer', 'Histórico de câncer de mama na família?').label}>
                   <RadioGroup value={form.historicoFamiliarCancer} onChange={radio('historicoFamiliarCancer')} options={['Sim', 'Não', 'Não sei']} />
                 </Field>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Peso">
-                    <input className={inputCls} value={form.peso} onChange={set('peso')} placeholder="Ex: 65 kg" />
+                  <Field label={campo(sg, 'peso', 'Peso').label}>
+                    <input className={inputCls} value={form.peso} onChange={set('peso')} placeholder={campo(sg, 'peso').placeholder} />
                   </Field>
-                  <Field label="Altura">
-                    <input className={inputCls} value={form.altura} onChange={set('altura')} placeholder="Ex: 1,68 m" />
+                  <Field label={campo(sg, 'altura', 'Altura').label}>
+                    <input className={inputCls} value={form.altura} onChange={set('altura')} placeholder={campo(sg, 'altura').placeholder} />
                   </Field>
                 </div>
 
-                <Field label="Atividade física">
-                  <input className={inputCls} value={form.atividadeFisica} onChange={set('atividadeFisica')} placeholder="Qual? Quantas vezes por semana?" />
+                <Field label={campo(sg, 'atividadeFisica', 'Atividade física').label}>
+                  <input className={inputCls} value={form.atividadeFisica} onChange={set('atividadeFisica')} placeholder={campo(sg, 'atividadeFisica').placeholder} />
                 </Field>
 
-                <Field label="Tabagismo">
+                <Field label={campo(sg, 'tabagismo', 'Tabagismo').label}>
                   <RadioGroup value={form.tabagismo} onChange={radio('tabagismo')} options={['Nunca fumei', 'Fumante', 'Ex-fumante']} />
                 </Field>
 
-                <Field label="Qualidade do sono">
+                <Field label={campo(sg, 'qualidadeSono', 'Qualidade do sono').label}>
                   <RadioGroup value={form.qualidadeSono} onChange={radio('qualidadeSono')} options={['Bom', 'Razoável', 'Ruim']} />
                 </Field>
 
-                <Field label="Qualidade da alimentação">
+                <Field label={campo(sg, 'qualidadeAlimentacao', 'Qualidade da alimentação').label}>
                   <RadioGroup value={form.qualidadeAlimentacao} onChange={radio('qualidadeAlimentacao')} options={['Boa', 'Razoável', 'Ruim']} />
                 </Field>
 
-                <Field label="Evacua diariamente?">
+                <Field label={campo(sg, 'evacuaDiariamente', 'Evacua diariamente?').label}>
                   <RadioGroup value={form.evacuaDiariamente} onChange={radio('evacuaDiariamente')} options={['Sim', 'Não']} />
                 </Field>
 
-                <Field label="Como está sua libido (desejo sexual)?">
-                  <textarea rows={2} className={inputCls} value={form.libido} onChange={set('libido')} placeholder="Descreva como está seu desejo sexual..." />
+                <Field label={campo(sg, 'libido', 'Como está sua libido (desejo sexual)?').label}>
+                  <textarea rows={2} className={inputCls} value={form.libido} onChange={set('libido')} placeholder={campo(sg, 'libido').placeholder} />
                 </Field>
               </FormSection>
             )}
@@ -365,15 +347,13 @@ export function PreConsultaForm() {
               <FormSection titulo="Seus Objetivos">
                 <div>
                   <span className="mb-1.5 block font-sans text-[0.72rem] font-medium uppercase tracking-[0.14em] text-bronze">
-                    Seus 3 principais objetivos com esta consulta <span className="text-gold">*</span>
+                    {preconsulta.objetivosLabel} <span className="text-gold">*</span>
                   </span>
-                  <p className="mb-4 text-sm text-espresso-soft">
-                    Em ordem de prioridade — o que é mais importante para você?
-                  </p>
+                  <p className="mb-4 text-sm text-espresso-soft">{preconsulta.objetivosAjuda}</p>
                   <div className="space-y-3">
-                    <NumberedField n={1} value={form.objetivo1} onChange={set('objetivo1')} placeholder="Objetivo prioritário" />
-                    <NumberedField n={2} value={form.objetivo2} onChange={set('objetivo2')} placeholder="Segundo objetivo" />
-                    <NumberedField n={3} value={form.objetivo3} onChange={set('objetivo3')} placeholder="Terceiro objetivo" />
+                    <NumberedField n={1} value={form.objetivo1} onChange={set('objetivo1')} placeholder={campo(ob, 'objetivo1').placeholder} />
+                    <NumberedField n={2} value={form.objetivo2} onChange={set('objetivo2')} placeholder={campo(ob, 'objetivo2').placeholder} />
+                    <NumberedField n={3} value={form.objetivo3} onChange={set('objetivo3')} placeholder={campo(ob, 'objetivo3').placeholder} />
                   </div>
                 </div>
               </FormSection>
@@ -383,7 +363,7 @@ export function PreConsultaForm() {
               (sent ? (
                 <Confirmacao onReenviar={enviar} />
               ) : (
-                <Revisao onEnviar={enviar} />
+                <Revisao onEnviar={enviar} mensagemFechamento={preconsulta.mensagemFechamento} />
               ))}
           </motion.div>
         </AnimatePresence>
@@ -442,15 +422,19 @@ function Intro({ onStart }: { onStart: () => void }) {
   );
 }
 
-function Revisao({ onEnviar }: { onEnviar: () => void }) {
+function Revisao({
+  onEnviar,
+  mensagemFechamento,
+}: {
+  onEnviar: () => void;
+  mensagemFechamento: string;
+}) {
   return (
     <div className="text-center">
       <span className="text-gold-fill font-display text-4xl">✦</span>
       <h2 className="mt-4 font-display text-2xl text-espresso">Tudo pronto!</h2>
-      <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-espresso-soft">
-        Suas respostas serão enviadas diretamente à nossa equipe pelo
-        WhatsApp. Obrigado por preencher este formulário com carinho — ele
-        nos ajuda a te conhecer antes mesmo da consulta.
+      <p className="mx-auto mt-3 max-w-sm whitespace-pre-line text-sm leading-relaxed text-espresso-soft">
+        {mensagemFechamento}
       </p>
       <button onClick={onEnviar} className="btn-primary mt-7">
         <Phone size={16} strokeWidth={1.8} />
@@ -576,16 +560,24 @@ const selectCls = `${inputCls} appearance-none bg-[length:14px] bg-[right_1rem_c
 /* Montagem da mensagem do WhatsApp                                        */
 /* ---------------------------------------------------------------------- */
 
-function buildMessage(f: FormState): string {
+function buildMessage(
+  f: FormState,
+  campos: { dp: CampoConfig[]; hi: CampoConfig[]; sg: CampoConfig[]; ob: CampoConfig[] },
+): string {
+  const rotulo = (lista: CampoConfig[], key: string, fallback: string) =>
+    campo(lista, key, fallback).label;
+
   const l = (cond: string, texto: string): string | undefined =>
     cond ? texto : undefined;
+
+  const { dp, hi, sg, ob } = campos;
 
   const linhas: (string | undefined)[] = [
     '📋 *Formulário de Pré-Consulta — Instituto Médico Brito*',
     '',
     '*Dados Pessoais*',
-    `Nome: ${f.nome}`,
-    l(f.sexo, `Sexo: ${f.sexo}`),
+    `${rotulo(dp, 'nome', 'Nome')}: ${f.nome}`,
+    l(f.sexo, `${rotulo(dp, 'sexo', 'Sexo')}: ${f.sexo}`),
     l(f.dataNascimento, `Nascimento: ${f.dataNascimento}`),
     l(f.cpf, `CPF: ${f.cpf}`),
     l(f.rg, `RG: ${f.rg}`),
@@ -630,6 +622,11 @@ function buildMessage(f: FormState): string {
     l(f.objetivo2, `2. ${f.objetivo2}`),
     l(f.objetivo3, `3. ${f.objetivo3}`),
   ];
+
+  // `hi`/`sg`/`ob` já usados via `rotulo` acima em pontos-chave; os demais
+  // rótulos seguem o texto padrão para manter a mensagem legível mesmo que
+  // o painel customize só parte dos campos.
+  void hi; void sg; void ob;
 
   return linhas.filter((x): x is string => x !== undefined).join('\n');
 }

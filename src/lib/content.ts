@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 export type CardItem = { titulo: string; descricao: string };
+export type CampoConfig = { key: string; label: string; placeholder: string };
 
 /** Modelo COMPLETO de conteúdo editável do site. */
 export type SiteContent = {
@@ -21,6 +22,7 @@ export type SiteContent = {
     ctaSecundario: string;
     cardNumero: string;
     cardTexto: string;
+    selo: string;
   };
   sobre: {
     eyebrow: string;
@@ -77,6 +79,26 @@ export type SiteContent = {
     medicosUrl: string;
     sobreUrl: string;
   };
+  menuVitalidade: {
+    eyebrow: string;
+    titulo: string;
+    subtitulo: string;
+    categorias: { titulo: string; itens: string[] }[];
+  };
+  preconsulta: {
+    ativo: boolean;
+    eyebrow: string;
+    titulo: string;
+    subtitulo: string;
+    whatsappNumero: string;
+    mensagemFechamento: string;
+    objetivosLabel: string;
+    objetivosAjuda: string;
+    camposDadosPessoais: CampoConfig[];
+    camposHistorico: CampoConfig[];
+    camposSaudeGeral: CampoConfig[];
+    camposObjetivos: CampoConfig[];
+  };
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -106,6 +128,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     ctaSecundario: 'Falar no WhatsApp',
     cardNumero: '100%',
     cardTexto: 'Plano Personalizado',
+    selo: 'Saúde Feminina & Bem-Estar do Casal',
   },
   sobre: {
     eyebrow: 'Quem Somos',
@@ -199,6 +222,98 @@ export const DEFAULT_CONTENT: SiteContent = {
       'Olá! Vim pelo site e gostaria de agendar uma consulta de avaliação personalizada.',
   },
   assets: { logoUrl: '', medicosUrl: '', sobreUrl: '' },
+  menuVitalidade: {
+    eyebrow: 'Evolução com saúde',
+    titulo: 'Menu de Vitalidade',
+    subtitulo:
+      'Um cuidado completo para cada fase e cada necessidade — da saúde feminina e masculina à composição corporal, vitalidade e saúde capilar.',
+    categorias: [
+      {
+        titulo: 'Saúde Feminina',
+        itens: ['Menopausa', 'Vitalidade', 'TPM', 'Libido', 'Endometriose', 'Lipedema'],
+      },
+      {
+        titulo: 'Saúde Masculina',
+        itens: ['Hipogonadismo', 'Vitalidade', 'Performance', 'Longevidade'],
+      },
+      {
+        titulo: 'Metabolismo e Composição Corporal',
+        itens: ['Obesidade', 'Emagrecimento', 'Preservação Muscular', 'Saúde Metabólica'],
+      },
+      {
+        titulo: 'Sala de Vitalidade',
+        itens: [
+          'Protocolos Injetáveis',
+          'Reposição de Nutrientes',
+          'Performance e Energia',
+          'Imunidade e Longevidade',
+        ],
+      },
+      {
+        titulo: 'Tricologia',
+        itens: ['Saúde Capilar', 'Protocolos Personalizados', 'Exossomos e Tecnologias Avançadas'],
+      },
+    ],
+  },
+  preconsulta: {
+    ativo: true,
+    eyebrow: 'Dr. Claudio Brito & Dra. Vanessa Brito',
+    titulo: 'Formulário de Pré-Consulta',
+    subtitulo:
+      'Bem-vindo(a) ao seu cuidado. Leva menos de 3 minutos e nos ajuda a conhecer sua história antes mesmo da consulta.',
+    whatsappNumero: '5569981206377',
+    mensagemFechamento:
+      'Obrigado por preencher este formulário com carinho.\nEle nos ajuda a te conhecer antes mesmo da consulta.',
+    objetivosLabel: 'Seus 3 principais objetivos com esta consulta',
+    objetivosAjuda: 'Em ordem de prioridade — o que é mais importante para você?',
+    camposDadosPessoais: [
+      { key: 'nome', label: 'Nome completo', placeholder: 'Seu nome completo' },
+      { key: 'sexo', label: 'Sexo', placeholder: '' },
+      { key: 'dataNascimento', label: 'Data de nascimento', placeholder: '' },
+      { key: 'cpf', label: 'CPF', placeholder: '000.000.000-00' },
+      { key: 'rg', label: 'RG (opcional)', placeholder: '' },
+      { key: 'profissao', label: 'Profissão (opcional)', placeholder: '' },
+      { key: 'convenio', label: 'Convênio médico (opcional)', placeholder: "Particular ou nome do convênio" },
+      { key: 'email', label: 'E-mail (opcional)', placeholder: '' },
+      { key: 'endereco', label: 'Endereço completo com CEP (opcional)', placeholder: '' },
+      { key: 'comoConheceu', label: 'Como conheceu o Instituto Médico Brito?', placeholder: '' },
+      { key: 'quemIndicou', label: 'Quem lhe indicou?', placeholder: '' },
+    ],
+    camposHistorico: [
+      { key: 'queixaPrincipal', label: 'Queixa principal', placeholder: 'Descreva o motivo principal da sua consulta...' },
+      { key: 'historiaResumo', label: 'Sua história (resumo)', placeholder: 'Conte um pouco sobre sua saúde, trajetória, o que achar relevante...' },
+      { key: 'temFilhos', label: 'Tem filhos?', placeholder: '' },
+      { key: 'quantosFilhos', label: 'Quantos filhos?', placeholder: '' },
+      { key: 'tipoParto', label: 'Tipo de parto', placeholder: '' },
+      { key: 'idadeMenarca', label: 'Com quantos anos menstruou pela 1ª vez?', placeholder: 'Ex: 12 anos' },
+      { key: 'idadePrimeiraRelacao', label: 'Com quantos anos foi sua 1ª relação sexual?', placeholder: 'Ex: 17 anos' },
+      { key: 'dum', label: 'Data da última menstruação (DUM)', placeholder: '' },
+      { key: 'cicloMenstrual', label: 'Período do ciclo menstrual', placeholder: '' },
+      { key: 'fluxo', label: 'Característica do fluxo', placeholder: '' },
+      { key: 'tpm', label: 'Possui TPM?', placeholder: '' },
+      { key: 'metodoContraceptivo', label: 'Método anticoncepcional atual', placeholder: "Pílula, DIU, preservativo, nenhum..." },
+      { key: 'ultimoPapanicolau', label: 'Quando foi o último Papanicolau?', placeholder: "Mês/Ano ou 'Nunca fiz'" },
+    ],
+    camposSaudeGeral: [
+      { key: 'doencasPrevias', label: 'Doenças prévias', placeholder: "Hipertensão, diabetes, tireoide, outras... ou 'Nenhuma'" },
+      { key: 'medicamentos', label: 'Medicamentos ou suplementos em uso', placeholder: "Liste os medicamentos/suplementos ou 'Nenhum'" },
+      { key: 'cirurgias', label: 'Cirurgias realizadas', placeholder: "Quais cirurgias? Quando? Ou 'Nenhuma'" },
+      { key: 'historicoFamiliarCancer', label: 'Histórico de câncer de mama na família?', placeholder: '' },
+      { key: 'peso', label: 'Peso', placeholder: 'Ex: 65 kg' },
+      { key: 'altura', label: 'Altura', placeholder: 'Ex: 1,68 m' },
+      { key: 'atividadeFisica', label: 'Atividade física', placeholder: 'Qual? Quantas vezes por semana?' },
+      { key: 'tabagismo', label: 'Tabagismo', placeholder: '' },
+      { key: 'qualidadeSono', label: 'Qualidade do sono', placeholder: '' },
+      { key: 'qualidadeAlimentacao', label: 'Qualidade da alimentação', placeholder: '' },
+      { key: 'evacuaDiariamente', label: 'Evacua diariamente?', placeholder: '' },
+      { key: 'libido', label: 'Como está sua libido (desejo sexual)?', placeholder: 'Descreva como está seu desejo sexual...' },
+    ],
+    camposObjetivos: [
+      { key: 'objetivo1', label: '1', placeholder: 'Objetivo prioritário' },
+      { key: 'objetivo2', label: '2', placeholder: 'Segundo objetivo' },
+      { key: 'objetivo3', label: '3', placeholder: 'Terceiro objetivo' },
+    ],
+  },
 };
 
 /** Merge raso por seção: valores salvos sobrescrevem os defaults. */

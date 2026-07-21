@@ -11,51 +11,17 @@ import {
 } from 'lucide-react';
 import { GoldDivider } from './GoldDivider';
 import { useAgendamento } from './AgendamentoModal';
+import { useContent } from './ContentProvider';
 
-type Categoria = {
-  icon: LucideIcon;
-  titulo: string;
-  itens: string[];
-};
-
-const CATEGORIAS: Categoria[] = [
-  {
-    icon: Flower2,
-    titulo: 'Saúde Feminina',
-    itens: ['Menopausa', 'Vitalidade', 'TPM', 'Libido', 'Endometriose', 'Lipedema'],
-  },
-  {
-    icon: Dumbbell,
-    titulo: 'Saúde Masculina',
-    itens: ['Hipogonadismo', 'Vitalidade', 'Performance', 'Longevidade'],
-  },
-  {
-    icon: Scale,
-    titulo: 'Metabolismo e Composição Corporal',
-    itens: ['Obesidade', 'Emagrecimento', 'Preservação Muscular', 'Saúde Metabólica'],
-  },
-  {
-    icon: Sparkles,
-    titulo: 'Sala de Vitalidade',
-    itens: [
-      'Protocolos Injetáveis',
-      'Reposição de Nutrientes',
-      'Performance e Energia',
-      'Imunidade e Longevidade',
-    ],
-  },
-  {
-    icon: Scissors,
-    titulo: 'Tricologia',
-    itens: ['Saúde Capilar', 'Protocolos Personalizados', 'Exossomos e Tecnologias Avançadas'],
-  },
-];
+// Ícone por posição (o painel edita título/itens; o ícone acompanha a ordem).
+const ICONS: LucideIcon[] = [Flower2, Dumbbell, Scale, Sparkles, Scissors];
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function MenuVitalidade() {
   const reduce = useReducedMotion();
   const { open } = useAgendamento();
+  const { menuVitalidade } = useContent();
 
   return (
     <section
@@ -71,7 +37,7 @@ export function MenuVitalidade() {
             transition={{ duration: 0.7 }}
             className="eyebrow"
           >
-            Evolução com saúde
+            {menuVitalidade.eyebrow}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 18 }}
@@ -80,7 +46,7 @@ export function MenuVitalidade() {
             transition={{ duration: 0.8, delay: 0.05, ease }}
             className="mt-3 font-display text-4xl leading-tight text-espresso sm:text-[2.9rem]"
           >
-            Menu de Vitalidade
+            {menuVitalidade.titulo}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -89,9 +55,7 @@ export function MenuVitalidade() {
             transition={{ duration: 0.8, delay: 0.1, ease }}
             className="mx-auto mt-4 max-w-xl text-[0.95rem] leading-relaxed text-espresso-soft"
           >
-            Um cuidado completo para cada fase e cada necessidade — da saúde
-            feminina e masculina à composição corporal, vitalidade e saúde
-            capilar.
+            {menuVitalidade.subtitulo}
           </motion.p>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
@@ -99,9 +63,54 @@ export function MenuVitalidade() {
         </div>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIAS.map((cat, i) => {
-            const Icon = cat.icon;
+          {menuVitalidade.categorias.map((cat, i) => {
+            const Icon = ICONS[i % ICONS.length];
             return (
+              <motion.article
+                key={cat.titulo}
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 26 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -8% 0px' }}
+                transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease }}
+                whileHover={reduce ? undefined : { y: -8 }}
+                className="group relative overflow-hidden rounded-2xl border border-gold/15 bg-white/70 p-7 shadow-soft transition-shadow duration-300 hover:shadow-lift"
+              >
+                <span className="absolute inset-x-0 top-0 h-[3px] scale-x-0 bg-gold-fade transition-transform duration-500 group-hover:scale-x-100" />
+
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-gold/25 bg-porcelain text-bronze transition-colors duration-300 group-hover:border-gold/50 group-hover:text-espresso">
+                  <Icon size={22} strokeWidth={1.4} />
+                </span>
+
+                <h3 className="mt-5 font-display text-[1.35rem] leading-tight text-espresso">
+                  {cat.titulo}
+                </h3>
+
+                <ul className="mt-4 space-y-2">
+                  {cat.itens.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-center gap-2.5 text-[0.85rem] leading-relaxed text-espresso-soft"
+                    >
+                      <span className="h-1 w-1 shrink-0 rounded-full bg-gold" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </motion.article>
+            );
+          })}
+        </div>
+
+        <div className="mt-14 text-center">
+          <button onClick={open} className="btn-primary">
+            Iniciar minha jornada
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
               <motion.article
                 key={cat.titulo}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 26 }}

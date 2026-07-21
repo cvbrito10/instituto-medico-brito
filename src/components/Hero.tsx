@@ -49,7 +49,7 @@ export function Hero() {
           >
             <Monogram className="h-4 w-4" />
             <span className="font-sans text-[0.68rem] uppercase tracking-[0.24em] text-bronze">
-              Saúde Feminina &amp; Bem-Estar do Casal
+              {content.hero.selo}
             </span>
           </motion.div>
 
