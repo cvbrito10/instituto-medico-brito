@@ -44,11 +44,19 @@ export function Depoimentos() {
               transition={{ duration: 0.6, ease }}
               className="flex flex-col items-center gap-5 rounded-[26px] border border-gold/20 bg-white/70 p-8 text-center shadow-soft sm:flex-row sm:text-left"
             >
-              <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gold/30 bg-porcelain">
+              <span className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl border border-gold/30 bg-porcelain sm:h-32 sm:w-32">
                 {atual.fotoUrl ? (
-                  <img src={atual.fotoUrl} alt={atual.nome} className="h-full w-full object-cover" />
+                  <img
+                    src={atual.fotoUrl}
+                    alt={atual.nome}
+                    className="h-full w-full object-cover"
+                    style={{
+                      objectPosition:
+                        atual.posicao === 'top' ? 'center top' : atual.posicao === 'bottom' ? 'center bottom' : 'center center',
+                    }}
+                  />
                 ) : (
-                  <span className="font-display text-2xl text-bronze">
+                  <span className="flex h-full w-full items-center justify-center font-display text-2xl text-bronze">
                     {atual.nome.trim().charAt(0).toUpperCase() || '✦'}
                   </span>
                 )}

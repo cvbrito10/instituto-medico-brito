@@ -2,15 +2,24 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Play, X } from 'lucide-react';
+import { Play, X, Instagram, ExternalLink } from 'lucide-react';
 import { useContent } from './ContentProvider';
 import { GoldDivider } from './GoldDivider';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+type VideoItem = {
+  pergunta: string;
+  medico: string;
+  tipo: 'youtube' | 'upload' | 'instagram';
+  youtubeId: string;
+  videoUrl: string;
+  instagramUrl: string;
+};
+
 export function VideosDuvidas() {
   const { videos } = useContent();
-  const [aberto, setAberto] = useState<string | null>(null);
+  const [aberto, setAberto] = useState<VideoItem | null>(null);
 
   if (!videos.ativo || videos.itens.length === 0) return null;
 
@@ -30,33 +39,74 @@ export function VideosDuvidas() {
           </div>
         </div>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {videos.itens.map((v) => (
-            <button
-              key={v.youtubeId}
-              onClick={() => setAberto(v.youtubeId)}
-              className="group text-left"
-            >
-              <div className="relative overflow-hidden rounded-2xl border border-gold/20 shadow-soft">
-                <img
-                  src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`}
-                  alt={v.pergunta}
-                  className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="absolute inset-0 flex items-center justify-center bg-espresso/20 transition-colors group-hover:bg-espresso/30">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110">
-                    <Play size={22} className="ml-0.5" fill="currentColor" />
+        <div className="mt-14 flex flex-wrap justify-center gap-6">
+          {videos.itens.map((v, i) => {
+            // Instagram abre em nova aba (o post precisa ser público);
+            // YouTube e upload direto abrem num player por cima da página.
+            if (v.tipo === 'instagram' && v.instagramUrl) {
+              return (
+                <a
+                  key={i}
+                  href={v.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block w-full max-w-sm sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
+                >
+                  <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-gold/20 bg-gradient-to-br from-nude to-porcelain shadow-soft">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110">
+                      <Instagram size={24} strokeWidth={1.6} />
+                    </span>
+                    <span className="absolute bottom-3 right-3 flex items-center gap-1 text-[0.7rem] text-bronze">
+                      Ver no Instagram <ExternalLink size={12} />
+                    </span>
+                  </div>
+                  <p className="mt-3 font-display text-lg leading-snug text-espresso">
+                    {v.pergunta}
+                  </p>
+                  <p className="font-sans text-[0.75rem] uppercase tracking-[0.14em] text-bronze">
+                    {v.medico}
+                  </p>
+                </a>
+              );
+            }
+
+            return (
+              <button
+                key={i}
+                onClick={() => setAberto(v)}
+                className="group block w-full max-w-sm text-left sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
+              >
+                <div className="relative overflow-hidden rounded-2xl border border-gold/20 shadow-soft">
+                  {v.tipo === 'upload' && v.videoUrl ? (
+                    <video
+                      src={v.videoUrl}
+                      className="aspect-video w-full object-cover"
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <img
+                      src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`}
+                      alt={v.pergunta}
+                      className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  )}
+                  <span className="absolute inset-0 flex items-center justify-center bg-espresso/20 transition-colors group-hover:bg-espresso/30">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110">
+                      <Play size={22} className="ml-0.5" fill="currentColor" />
+                    </span>
                   </span>
-                </span>
-              </div>
-              <p className="mt-3 font-display text-lg leading-snug text-espresso">
-                {v.pergunta}
-              </p>
-              <p className="font-sans text-[0.75rem] uppercase tracking-[0.14em] text-bronze">
-                {v.medico}
-              </p>
-            </button>
-          ))}
+                </div>
+                <p className="mt-3 font-display text-lg leading-snug text-espresso">
+                  {v.pergunta}
+                </p>
+                <p className="font-sans text-[0.75rem] uppercase tracking-[0.14em] text-bronze">
+                  {v.medico}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -86,13 +136,22 @@ export function VideosDuvidas() {
                 <X size={26} strokeWidth={1.8} />
               </button>
               <div className="overflow-hidden rounded-2xl bg-black shadow-lift">
-                <iframe
-                  src={`https://www.youtube.com/embed/${aberto}?autoplay=1`}
-                  title="Vídeo"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="aspect-video w-full"
-                />
+                {aberto.tipo === 'upload' && aberto.videoUrl ? (
+                  <video
+                    src={aberto.videoUrl}
+                    controls
+                    autoPlay
+                    className="aspect-video w-full"
+                  />
+                ) : (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${aberto.youtubeId}?autoplay=1`}
+                    title="Vídeo"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="aspect-video w-full"
+                  />
+                )}
               </div>
             </motion.div>
           </motion.div>

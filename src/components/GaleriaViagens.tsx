@@ -24,11 +24,11 @@ export function GaleriaViagens() {
           </div>
         </div>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 flex flex-wrap justify-center gap-4">
           {galeria.itens.map((item, i) => (
             <figure
               key={i}
-              className="group relative overflow-hidden rounded-2xl border border-gold/15 shadow-soft"
+              className="group relative w-full max-w-sm overflow-hidden rounded-2xl border border-gold/15 shadow-soft sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)]"
             >
               <img
                 src={item.fotoUrl}

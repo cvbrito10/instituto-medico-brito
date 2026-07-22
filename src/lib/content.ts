@@ -101,14 +101,21 @@ export type SiteContent = {
   };
   depoimentos: {
     ativo: boolean;
-    itens: { fotoUrl: string; nome: string; texto: string }[];
+    itens: { fotoUrl: string; nome: string; texto: string; posicao: 'top' | 'center' | 'bottom' }[];
   };
   videos: {
     ativo: boolean;
     eyebrow: string;
     titulo: string;
     subtitulo: string;
-    itens: { pergunta: string; medico: string; youtubeId: string }[];
+    itens: {
+      pergunta: string;
+      medico: string;
+      tipo: 'youtube' | 'upload' | 'instagram';
+      youtubeId: string;
+      videoUrl: string;
+      instagramUrl: string;
+    }[];
   };
   galeria: {
     ativo: boolean;

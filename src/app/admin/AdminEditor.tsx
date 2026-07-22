@@ -376,6 +376,7 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
           <VideoListEditor
             items={c.videos.itens}
             onChange={(itens) => update('videos', { itens })}
+            onUpload={uploadGeneric}
           />
         </Section>
 
@@ -791,18 +792,25 @@ function CampoListEditor({ items, onChange, somentePlaceholder }: {
   );
 }
 
-function VideoListEditor({ items, onChange }: {
-  items: { pergunta: string; medico: string; youtubeId: string }[];
-  onChange: (items: { pergunta: string; medico: string; youtubeId: string }[]) => void;
+function VideoListEditor({ items, onChange, onUpload }: {
+  items: {
+    pergunta: string; medico: string; tipo: 'youtube' | 'upload' | 'instagram';
+    youtubeId: string; videoUrl: string; instagramUrl: string;
+  }[];
+  onChange: (items: {
+    pergunta: string; medico: string; tipo: 'youtube' | 'upload' | 'instagram';
+    youtubeId: string; videoUrl: string; instagramUrl: string;
+  }[]) => void;
+  onUpload: (file: File, prefix: string) => Promise<string | null>;
 }) {
-  function set(i: number, patch: Partial<{ pergunta: string; medico: string; youtubeId: string }>) {
+  function set(i: number, patch: Partial<(typeof items)[number]>) {
     onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
   }
   function remove(i: number) {
     onChange(items.filter((_, idx) => idx !== i));
   }
   function add() {
-    onChange([...items, { pergunta: '', medico: '', youtubeId: '' }]);
+    onChange([...items, { pergunta: '', medico: '', tipo: 'youtube', youtubeId: '', videoUrl: '', instagramUrl: '' }]);
   }
 
   return (
@@ -811,12 +819,60 @@ function VideoListEditor({ items, onChange }: {
         <div key={i} className="space-y-2 rounded-xl border border-nude-deep/40 bg-white/70 p-4">
           <input className={inp} placeholder="Pergunta (ex.: Tem dúvidas sobre Menopausa?)"
             value={it.pergunta} onChange={(e) => set(i, { pergunta: e.target.value })} />
-          <div className="grid gap-2 sm:grid-cols-2">
-            <input className={inp} placeholder="Médico(a) (ex.: Dra. Vanessa Brito)"
-              value={it.medico} onChange={(e) => set(i, { medico: e.target.value })} />
+          <input className={inp} placeholder="Médico(a) (ex.: Dra. Vanessa Brito)"
+            value={it.medico} onChange={(e) => set(i, { medico: e.target.value })} />
+
+          <div className="flex flex-wrap gap-2">
+            {(['youtube', 'upload', 'instagram'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => set(i, { tipo: t })}
+                className={
+                  it.tipo === t
+                    ? 'rounded-full border border-gold bg-gold-fade px-3 py-1 text-xs text-porcelain'
+                    : 'rounded-full border border-nude-deep/50 px-3 py-1 text-xs text-espresso-soft'
+                }
+              >
+                {t === 'youtube' ? 'YouTube' : t === 'upload' ? 'Enviar vídeo' : 'Link do Instagram'}
+              </button>
+            ))}
+          </div>
+
+          {it.tipo === 'youtube' && (
             <input className={inp} placeholder="ID do vídeo no YouTube (ex.: dQw4w9WgXcQ)"
               value={it.youtubeId} onChange={(e) => set(i, { youtubeId: e.target.value })} />
-          </div>
+          )}
+
+          {it.tipo === 'instagram' && (
+            <input className={inp} placeholder="Link do post/reel do Instagram (o post precisa ser público)"
+              value={it.instagramUrl} onChange={(e) => set(i, { instagramUrl: e.target.value })} />
+          )}
+
+          {it.tipo === 'upload' && (
+            <div className="space-y-1.5">
+              {it.videoUrl && (
+                <a href={it.videoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-bronze hover:underline">
+                  Ver vídeo enviado
+                </a>
+              )}
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                className="block w-full text-xs text-espresso-soft file:mr-3 file:rounded-full file:border-0 file:bg-nude file:px-3 file:py-1.5 file:text-xs file:text-espresso"
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const url = await onUpload(f, 'video');
+                  if (url) set(i, { videoUrl: url });
+                }}
+              />
+              <p className="text-[0.68rem] text-espresso-soft">
+                Envie o arquivo do vídeo (mp4). Arquivos grandes podem demorar para enviar.
+              </p>
+            </div>
+          )}
+
           <button onClick={() => remove(i)} className="text-xs text-red-700 hover:underline">
             Remover vídeo
           </button>
@@ -883,27 +939,32 @@ function GaleriaListEditor({ items, onChange, onUpload }: {
 }
 
 function DepoimentoListEditor({ items, onChange, onUpload }: {
-  items: { fotoUrl: string; nome: string; texto: string }[];
-  onChange: (items: { fotoUrl: string; nome: string; texto: string }[]) => void;
+  items: { fotoUrl: string; nome: string; texto: string; posicao: 'top' | 'center' | 'bottom' }[];
+  onChange: (items: { fotoUrl: string; nome: string; texto: string; posicao: 'top' | 'center' | 'bottom' }[]) => void;
   onUpload: (file: File, prefix: string) => Promise<string | null>;
 }) {
-  function set(i: number, patch: Partial<{ fotoUrl: string; nome: string; texto: string }>) {
+  function set(i: number, patch: Partial<(typeof items)[number]>) {
     onChange(items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
   }
   function remove(i: number) {
     onChange(items.filter((_, idx) => idx !== i));
   }
   function add() {
-    onChange([...items, { fotoUrl: '', nome: '', texto: '' }]);
+    onChange([...items, { fotoUrl: '', nome: '', texto: '', posicao: 'center' }]);
   }
 
   return (
     <div className="space-y-3">
       {items.map((it, i) => (
         <div key={i} className="flex flex-col gap-3 rounded-xl border border-nude-deep/40 bg-white/70 p-4 sm:flex-row">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gold/20 bg-porcelain">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gold/20 bg-porcelain">
             {it.fotoUrl ? (
-              <img src={it.fotoUrl} alt="" className="h-full w-full object-cover" />
+              <img
+                src={it.fotoUrl}
+                alt=""
+                className="h-full w-full object-cover"
+                style={{ objectPosition: it.posicao === 'top' ? 'center top' : it.posicao === 'bottom' ? 'center bottom' : 'center center' }}
+              />
             ) : (
               <span className="text-[0.6rem] text-espresso-soft">sem foto</span>
             )}
@@ -920,6 +981,25 @@ function DepoimentoListEditor({ items, onChange, onUpload }: {
                 if (url) set(i, { fotoUrl: url });
               }}
             />
+            {it.fotoUrl && (
+              <div className="flex items-center gap-2">
+                <span className="text-[0.68rem] text-espresso-soft">Posição da foto:</span>
+                {(['top', 'center', 'bottom'] as const).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => set(i, { posicao: p })}
+                    className={
+                      it.posicao === p
+                        ? 'rounded-full border border-gold bg-gold-fade px-2.5 py-0.5 text-[0.68rem] text-porcelain'
+                        : 'rounded-full border border-nude-deep/50 px-2.5 py-0.5 text-[0.68rem] text-espresso-soft'
+                    }
+                  >
+                    {p === 'top' ? 'Topo' : p === 'center' ? 'Centro' : 'Base'}
+                  </button>
+                ))}
+              </div>
+            )}
             <input className={inp} placeholder="Nome do paciente (ex.: Andressa Pena — Cacoal)"
               value={it.nome} onChange={(e) => set(i, { nome: e.target.value })} />
             <textarea rows={2} className={ta} placeholder="Texto do depoimento"
