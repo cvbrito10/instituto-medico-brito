@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Phone, CheckCircle2 } from 'lucide-react';
 import { Monogram } from '@/components/Monogram';
 import { useContent } from '@/components/ContentProvider';
 import { waLink, type CampoConfig } from '@/lib/content';
+import { trackEvent } from '@/lib/track';
 
 type FormState = {
   nome: string;
@@ -84,6 +85,12 @@ export function PreConsultaForm() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [sent, setSent] = useState(false);
 
+  // Funil: registra em qual etapa do formulário o visitante está.
+  useEffect(() => {
+    trackEvent('form_step', `preconsulta:${STEP_LABELS[step]}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
   const dp = preconsulta.camposDadosPessoais;
   const hi = preconsulta.camposHistorico;
   const sg = preconsulta.camposSaudeGeral;
@@ -113,6 +120,7 @@ export function PreConsultaForm() {
 
   const enviar = () => {
     setSent(true);
+    trackEvent('form_submit', 'preconsulta');
     window.open(
       waLink(preconsulta.whatsappNumero, mensagem),
       '_blank',

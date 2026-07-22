@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react';
 import { Logo } from './Logo';
 import { useAgendamento } from './AgendamentoModal';
 import { useContent } from './ContentProvider';
+import { trackEvent } from '@/lib/track';
 import { cn } from '@/lib/utils';
 
 const LINKS = [
@@ -69,6 +70,7 @@ export function Navbar() {
             <a
               key={l.href}
               href={l.href}
+              onClick={() => trackEvent('click', `nav:${l.label}`)}
               className="group relative font-sans text-[0.82rem] tracking-wide text-espresso-soft transition-colors hover:text-espresso"
             >
               {l.label}
@@ -78,7 +80,13 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={open} className="btn-primary hidden px-6 py-3 sm:inline-flex">
+          <button
+            onClick={() => {
+              trackEvent('click', 'cta:Agendar Consulta (topo)');
+              open();
+            }}
+            className="btn-primary hidden px-6 py-3 sm:inline-flex"
+          >
             Agendar Consulta
           </button>
           <button
@@ -126,7 +134,10 @@ export function Navbar() {
                   <a
                     key={l.href}
                     href={l.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() => {
+                      trackEvent('click', `nav:${l.label}`);
+                      setMenuOpen(false);
+                    }}
                     className="border-b border-nude/70 py-3.5 font-display text-2xl text-espresso"
                   >
                     {l.label}
@@ -135,6 +146,7 @@ export function Navbar() {
               </div>
               <button
                 onClick={() => {
+                  trackEvent('click', 'cta:Agendar Consulta (menu mobile)');
                   setMenuOpen(false);
                   open();
                 }}

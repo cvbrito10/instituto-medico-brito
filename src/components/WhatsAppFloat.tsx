@@ -2,6 +2,7 @@
 
 import { useContent } from './ContentProvider';
 import { waLink } from '@/lib/content';
+import { trackEvent } from '@/lib/track';
 
 export function WhatsAppFloat() {
   const { contato, whatsapp } = useContent();
@@ -11,6 +12,7 @@ export function WhatsAppFloat() {
       href={waLink(contato.whatsappNumber, whatsapp.mensagemPadrao)}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackEvent('click', 'whatsapp:botao-flutuante')}
       aria-label="Falar no WhatsApp"
       className="group fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-[0_14px_34px_-10px_rgba(37,211,102,0.6)] transition-transform duration-300 hover:scale-105"
     >

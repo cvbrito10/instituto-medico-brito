@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Loader2, CheckCircle2 } from 'lucide-react';
 import { useContent } from './ContentProvider';
+import { trackEvent } from '@/lib/track';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -12,6 +13,7 @@ export function MaterialGratuito() {
   const [nome, setNome] = useState('');
   const [cidade, setCidade] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'enviando' | 'ok' | 'erro'>('idle');
   const [erro, setErro] = useState('');
 
@@ -25,7 +27,7 @@ export function MaterialGratuito() {
       const res = await fetch('/api/material', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, cidade, telefone, material: material.titulo }),
+        body: JSON.stringify({ nome, cidade, telefone, email, material: material.titulo }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -34,6 +36,7 @@ export function MaterialGratuito() {
         return;
       }
       setStatus('ok');
+      trackEvent('form_submit', 'material-gratuito');
     } catch {
       setErro('Falha de conexão. Tente novamente.');
       setStatus('erro');
@@ -106,6 +109,13 @@ export function MaterialGratuito() {
                   placeholder="Seu WhatsApp com DDD"
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
+                />
+                <input
+                  type="email"
+                  className={inputCls}
+                  placeholder="Seu e-mail (opcional)"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 {status === 'erro' && (
                   <p className="text-sm text-red-700">{erro}</p>

@@ -8,6 +8,7 @@ type Payload = {
   nome?: string;
   cidade?: string;
   telefone?: string;
+  email?: string;
   material?: string;
 };
 
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
   const nome = sanitize(body.nome, 120);
   const cidade = sanitize(body.cidade, 120);
   const telefone = sanitize(body.telefone, 40);
+  const email = sanitize(body.email, 160);
   const material = sanitize(body.material, 160);
 
   if (nome.length < 2) {
@@ -65,6 +67,7 @@ export async function POST(req: NextRequest) {
       nome,
       telefone,
       cidade: cidade || null,
+      email: email || null,
       material: material || null,
       origem: 'material-gratuito',
       user_agent: req.headers.get('user-agent'),

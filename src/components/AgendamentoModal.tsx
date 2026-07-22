@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X, Loader2, Check, Phone } from 'lucide-react';
 import { waLink } from '@/lib/content';
+import { trackEvent } from '@/lib/track';
 import { useContent } from './ContentProvider';
 import { Monogram } from './Monogram';
 
@@ -45,6 +46,7 @@ export function AgendamentoProvider({ children }: { children: ReactNode }) {
     setStatus('idle');
     setErrorMsg('');
     setIsOpen(true);
+    trackEvent('form_open', 'agendamento');
   }, []);
 
   const close = useCallback(() => setIsOpen(false), []);
@@ -93,6 +95,7 @@ export function AgendamentoProvider({ children }: { children: ReactNode }) {
           throw new Error(data?.error ?? 'Não foi possível enviar agora.');
         }
         setStatus('success');
+        trackEvent('form_submit', 'agendamento');
         // Encaminha para o WhatsApp logo após capturar o lead
         setTimeout(goToWhatsapp, 600);
       } catch (err) {

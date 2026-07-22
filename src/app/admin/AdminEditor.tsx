@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Loader2, Check, LogOut, UploadCloud, ExternalLink,
-  Image as ImageIcon, Plus, Trash2,
+  Image as ImageIcon, Plus, Trash2, BarChart3,
 } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { SiteContent, CardItem, CampoConfig } from '@/lib/content';
@@ -94,6 +94,10 @@ export function AdminEditor({ initialContent, userEmail }: Props) {
             <span className="font-roman text-sm tracking-[0.28em] text-espresso">PAINEL</span>
           </div>
           <div className="flex items-center gap-3">
+            <a href="/admin/marketing"
+              className="flex items-center gap-1.5 rounded-full border border-gold/30 px-4 py-2 text-sm text-espresso-soft hover:text-espresso">
+              <BarChart3 size={15} /> Marketing
+            </a>
             <a href="/" target="_blank" rel="noopener noreferrer"
               className="hidden items-center gap-1.5 text-sm text-espresso-soft hover:text-espresso sm:flex">
               <ExternalLink size={15} /> Ver site
