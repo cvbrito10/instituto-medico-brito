@@ -795,11 +795,11 @@ function CampoListEditor({ items, onChange, somentePlaceholder }: {
 function VideoListEditor({ items, onChange, onUpload }: {
   items: {
     pergunta: string; medico: string; tipo: 'youtube' | 'upload' | 'instagram';
-    youtubeId: string; videoUrl: string; instagramUrl: string;
+    youtubeId: string; videoUrl: string; instagramUrl: string; capaUrl: string;
   }[];
   onChange: (items: {
     pergunta: string; medico: string; tipo: 'youtube' | 'upload' | 'instagram';
-    youtubeId: string; videoUrl: string; instagramUrl: string;
+    youtubeId: string; videoUrl: string; instagramUrl: string; capaUrl: string;
   }[]) => void;
   onUpload: (file: File, prefix: string) => Promise<string | null>;
 }) {
@@ -810,7 +810,7 @@ function VideoListEditor({ items, onChange, onUpload }: {
     onChange(items.filter((_, idx) => idx !== i));
   }
   function add() {
-    onChange([...items, { pergunta: '', medico: '', tipo: 'youtube', youtubeId: '', videoUrl: '', instagramUrl: '' }]);
+    onChange([...items, { pergunta: '', medico: '', tipo: 'youtube', youtubeId: '', videoUrl: '', instagramUrl: '', capaUrl: '' }]);
   }
 
   return (
@@ -872,6 +872,37 @@ function VideoListEditor({ items, onChange, onUpload }: {
               </p>
             </div>
           )}
+
+          <div className="flex items-center gap-3 rounded-lg border border-dashed border-nude-deep/50 p-2.5">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-gold/20 bg-porcelain">
+              {it.capaUrl ? (
+                <img src={it.capaUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-[0.55rem] text-espresso-soft">sem capa</span>
+              )}
+            </span>
+            <div className="flex-1">
+              <span className="mb-1 block text-[0.68rem] text-espresso-soft">
+                Capa personalizada (opcional — se não enviar, usamos a miniatura automática)
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="block w-full text-xs text-espresso-soft file:mr-3 file:rounded-full file:border-0 file:bg-nude file:px-3 file:py-1.5 file:text-xs file:text-espresso"
+                onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  if (!f) return;
+                  const url = await onUpload(f, 'video-capa');
+                  if (url) set(i, { capaUrl: url });
+                }}
+              />
+            </div>
+            {it.capaUrl && (
+              <button onClick={() => set(i, { capaUrl: '' })} className="text-xs text-red-700 hover:underline">
+                Remover
+              </button>
+            )}
+          </div>
 
           <button onClick={() => remove(i)} className="text-xs text-red-700 hover:underline">
             Remover vídeo

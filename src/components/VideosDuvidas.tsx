@@ -15,6 +15,7 @@ type VideoItem = {
   youtubeId: string;
   videoUrl: string;
   instagramUrl: string;
+  capaUrl: string;
 };
 
 export function VideosDuvidas() {
@@ -53,10 +54,17 @@ export function VideosDuvidas() {
                   className="group block w-full max-w-sm sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
                 >
                   <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-gold/20 bg-gradient-to-br from-nude to-porcelain shadow-soft">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110">
+                    {v.capaUrl ? (
+                      <img src={v.capaUrl} alt={v.pergunta} className="absolute inset-0 h-full w-full object-cover" />
+                    ) : null}
+                    <span className={
+                      v.capaUrl
+                        ? 'relative flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110'
+                        : 'flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-gold shadow-soft transition-transform group-hover:scale-110'
+                    }>
                       <Instagram size={24} strokeWidth={1.6} />
                     </span>
-                    <span className="absolute bottom-3 right-3 flex items-center gap-1 text-[0.7rem] text-bronze">
+                    <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-espresso/40 px-2 py-1 text-[0.7rem] text-porcelain backdrop-blur-sm">
                       Ver no Instagram <ExternalLink size={12} />
                     </span>
                   </div>
@@ -77,7 +85,13 @@ export function VideosDuvidas() {
                 className="group block w-full max-w-sm text-left sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
               >
                 <div className="relative overflow-hidden rounded-2xl border border-gold/20 shadow-soft">
-                  {v.tipo === 'upload' && v.videoUrl ? (
+                  {v.capaUrl ? (
+                    <img
+                      src={v.capaUrl}
+                      alt={v.pergunta}
+                      className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : v.tipo === 'upload' && v.videoUrl ? (
                     <video
                       src={v.videoUrl}
                       className="aspect-video w-full object-cover"

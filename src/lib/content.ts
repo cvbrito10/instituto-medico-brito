@@ -115,6 +115,7 @@ export type SiteContent = {
       youtubeId: string;
       videoUrl: string;
       instagramUrl: string;
+      capaUrl: string;
     }[];
   };
   galeria: {
